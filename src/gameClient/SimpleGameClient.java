@@ -7,13 +7,14 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
 
 import Server.Game_Server;
 import Server.game_service;
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
+import com.google.gson.Gson;
+
 /**
  * This class represents a simple example for using the GameServer API:
  * the main file performs the following tasks:
@@ -41,9 +42,11 @@ public class SimpleGameClient {
 		String g = game.getGraph();
 		OOP_DGraph gg = new OOP_DGraph();
 		gg.init(g);
+		MyGameGUI paint = new MyGameGUI(game);
+		paint.setVisible(true);
+	
 		String info = game.toString();
-		Thread t = new Thread();
-		t.start();
+		
 
 		JSONObject line;
 		try {
@@ -62,6 +65,7 @@ public class SimpleGameClient {
 		}
 		catch (JSONException e) {e.printStackTrace();}
 		game.startGame();
+		
 		// should be a Thread!!!
 		while(game.isRunning()) {
 			moveRobots(game, gg);
@@ -100,6 +104,7 @@ public class SimpleGameClient {
 			}
 		}
 	}
+	
 	/**
 	 * a very simple random walk implementation!
 	 * @param g
