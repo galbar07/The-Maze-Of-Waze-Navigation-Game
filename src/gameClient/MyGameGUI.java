@@ -48,14 +48,44 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	game_service game;
 	static int i=0;
 	static int mc=0;
+	Thread t ;
 	
-	public MyGameGUI(game_service game) {
+	public MyGameGUI(game_service game) throws JSONException {
 		this.game = game;
 		gg = new OOP_DGraph();
-		initGUI();
+		set_scale();
+		//initGUI();
+		StdDraw.enableDoubleBuffering();
+		//StdDraw.show();
+		 t = new Thread(this);
+		t.start();
 	}
+	private void set_scale() throws JSONException {
+		
+		StdDraw.setCanvasSize(800,800);
 
-	private void initGUI()  
+		double max_x = Double.MIN_VALUE;
+		double max_y = Double.MIN_VALUE;
+		double min_x = Double.MAX_VALUE;
+		double min_y = Double.MAX_VALUE;
+	
+		gg.init(this.game.getGraph());
+		gg.getV();
+		Collection<oop_node_data>search = gg.getV();
+		for (oop_node_data v : search) {
+			max_x = Math.max(max_x, v.getLocation().x());
+			max_y = Math.max(max_y, v.getLocation().y());
+			min_y = Math.min(min_y, v.getLocation().y());
+			min_x = Math.min(min_x, v.getLocation().x());
+
+		}
+		StdDraw.setXscale(min_x-0.002,max_x+0.002);
+		StdDraw.setYscale(min_y-0.002,max_y+0.002);
+		paint();
+	}
+	
+
+	private void initGUI() throws JSONException  
 	{	
 		this.setSize(600, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -95,29 +125,9 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	}	
 	public void paint() throws JSONException//add text in case two edges go the same direction
 	{
-		System.out.println("paint the graph");
-		StdDraw.setCanvasSize(800,800);
+		
+		
 		Font font = new Font("Arial", Font.BOLD, 15);
-
-		double max_x = Double.MIN_VALUE;
-		double max_y = Double.MIN_VALUE;
-		double min_x = Double.MAX_VALUE;
-		double min_y = Double.MAX_VALUE;
-	
-		gg.init(this.game.getGraph());
-		gg.getV();
-	
-		Collection<oop_node_data>search = gg.getV();
-		for (oop_node_data v : search) {
-			max_x = Math.max(max_x, v.getLocation().x());
-			max_y = Math.max(max_y, v.getLocation().y());
-			min_y = Math.min(min_y, v.getLocation().y());
-			min_x = Math.min(min_x, v.getLocation().x());
-
-		}
-		StdDraw.setXscale(min_x-0.002,max_x+0.002);
-		StdDraw.setYscale(min_y-0.002,max_y+0.002);
-
 		StdDraw.setPenRadius(0.02);
 		Collection<oop_node_data> Paint_node = gg.getV();
 		for (oop_node_data v : Paint_node) {
@@ -159,22 +169,23 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			}
 		
 		}
+		
 		paint_fruit();
-		//paint_robots();
+		paint_robots();
 	}
 	
-//	private void paint_robots() throws JSONException {
-//		List<String> r_iter = game.getRobots();
-//		JSONObject line2 ;
-//	    System.out.println(r_iter.get(0));
-////			line2 = new JSONObject(r_iter.next().replaceAll("\\s+",""));
-////			JSONObject ttt = line2.getJSONObject("");
-////			String[] pos_x = ttt.getString("pos").split(",");
-////			OOP_Point3D p_robot = new OOP_Point3D(Double.parseDouble(pos_x[0]),Double.parseDouble(pos_x[1])); 
-////			StdDraw.picture(p_robot.x(),p_robot.y(),"robot.png",0.0007,0.0007);//change 
-////			
-//		
-//	}
+	private void paint_robots() throws JSONException {
+		List<String> robots = game.getRobots();
+		Iterator<String> r_iter=robots.iterator(); 
+		JSONObject line2 ;
+	    System.out.println(robots.get(0));
+			line2 = new JSONObject(r_iter.next().replaceAll("\\s+",""));
+			JSONObject ttt = line2.getJSONObject("Robot");
+			String[] posOfRobots = ttt.getString("pos").split(",");
+			OOP_Point3D p_robot = new OOP_Point3D(Double.parseDouble(posOfRobots[0]),Double.parseDouble(posOfRobots[1])); 
+			StdDraw.picture(p_robot.x(),p_robot.y(),"robot.png",0.0007,0.0007);//change 	
+		
+	}
 
 	private void paint_fruit() throws JSONException {
 		Iterator<String> f_iter = game.getFruits().iterator();
@@ -418,9 +429,77 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 //		}
 //	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+	
+		while(this.game.isRunning()) {
+			try {
+				
+				paint_random();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			}
+			
+		}
+
+	private void paint_random() throws JSONException {
+		
+		
+		StdDraw.enableDoubleBuffering();
+		Font font = new Font("Arial", Font.BOLD, 15);
+		StdDraw.setPenRadius(0.02);
+		Collection<oop_node_data> Paint_node = gg.getV();
+		for (oop_node_data v : Paint_node) {
+			StdDraw.setPenColor(Color.black);
+			StdDraw.point(v.getLocation().x(), v.getLocation().y());
+			StdDraw.setPenColor(Color.BLUE);
+			StdDraw.setFont(font);
+			StdDraw.text(v.getLocation().x(), v.getLocation().y()+0.00012, Integer.toString(v.getKey()));
+		}
+		StdDraw.setPenRadius(0.005);
+		for (oop_node_data v : Paint_node) {
+			Collection<oop_edge_data> Paint_edges = gg.getE(v.getKey());
+			if(Paint_edges==null)
+				break;
+			for(oop_edge_data E: Paint_edges) {
+				OOP_Point3D p1 = pointreturn(E.getDest());
+				OOP_Point3D p2 = pointreturn(E.getSrc());
+				if(p1!=null && p2!=null) {
+					StdDraw.setPenRadius(0.005);
+					StdDraw.setPenColor(Color.RED);
+					StdDraw.line(p1.x(), p1.y(),p2.x(), p2.y());
+					OOP_Point3D T = new OOP_Point3D(((p1.x()+p2.x())/2),((p1.y()+p2.y())/2));
+					StdDraw.setPenRadius(0.5);
+					StdDraw.setPenColor(Color.BLACK);
+					 String no = String.format("%.1f", E.getWeight());
+					StdDraw.text(((T.x()+p1.x())/2),((T.y()+p1.y())/2), no);
+					StdDraw.setPenColor(Color.CYAN);
+					StdDraw.setPenRadius(0.020);
+					OOP_Point3D p4 = new OOP_Point3D((p1.x()+p2.x())/2,(p1.y()+p2.y())/2);
+
+
+					for(int i=0;i<2;i++) {
+						OOP_Point3D p5 = new OOP_Point3D((p4.x()+p1.x())/2,(p4.y()+p1.y())/2);
+						p4 = new OOP_Point3D(p5);
+					}
+					StdDraw.point(p4.x(),p4.y());
+
+				}
+			}
+		
+		}
+		
+		paint_fruit();
+		paint_robots();
+		StdDraw.pause(250);
+		
+		StdDraw.show();
+		StdDraw.clear();
 		
 	}
-}
+	}
+
