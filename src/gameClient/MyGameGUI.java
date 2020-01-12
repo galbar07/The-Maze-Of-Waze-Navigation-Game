@@ -84,45 +84,45 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		paint();
 	}
 	
-
-	private void initGUI() throws JSONException  
-	{	
-		this.setSize(600, 600);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		MenuBar menuBar = new MenuBar();
-		Menu menu = new Menu("File");
-		Menu menu2 = new Menu("Algorithams");
-		menuBar.add(menu);
-		menuBar.add(menu2);
-		this.setMenuBar(menuBar);
-
-		MenuItem item1 = new MenuItem("Draw Graph");
-		item1.addActionListener(this);
-		MenuItem item2 = new MenuItem("Draw from file");
-		item2.addActionListener(this);
-		MenuItem item3 = new MenuItem("Save to file");
-		item3.addActionListener(this);
-
-		MenuItem item4 = new MenuItem("Is connected");
-		item4.addActionListener(this);
-		MenuItem item5 = new MenuItem("find Shortest path");
-		item5.addActionListener(this);
-		MenuItem item6= new MenuItem("find Shortest path distance");
-		item6.addActionListener(this);
-		MenuItem item7= new MenuItem("TSP");
-		item7.addActionListener(this);
-
-		menu.add(item1);
-		menu.add(item2);
-		menu.add(item3);
-		menu2.add(item4);
-		menu2.add(item5);
-		menu2.add(item6);
-		menu2.add(item7);
-		this.addMouseListener(this);
-
-	}	
+//
+//	private void initGUI() throws JSONException  
+//	{	
+//		this.setSize(600, 600);
+//		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//		MenuBar menuBar = new MenuBar();
+//		Menu menu = new Menu("File");
+//		Menu menu2 = new Menu("Algorithams");
+//		menuBar.add(menu);
+//		menuBar.add(menu2);
+//		this.setMenuBar(menuBar);
+//
+//		MenuItem item1 = new MenuItem("Draw Graph");
+//		item1.addActionListener(this);
+//		MenuItem item2 = new MenuItem("Draw from file");
+//		item2.addActionListener(this);
+//		MenuItem item3 = new MenuItem("Save to file");
+//		item3.addActionListener(this);
+//
+//		MenuItem item4 = new MenuItem("Is connected");
+//		item4.addActionListener(this);
+//		MenuItem item5 = new MenuItem("find Shortest path");
+//		item5.addActionListener(this);
+//		MenuItem item6= new MenuItem("find Shortest path distance");
+//		item6.addActionListener(this);
+//		MenuItem item7= new MenuItem("TSP");
+//		item7.addActionListener(this);
+//
+//		menu.add(item1);
+//		menu.add(item2);
+//		menu.add(item3);
+//		menu2.add(item4);
+//		menu2.add(item5);
+//		menu2.add(item6);
+//		menu2.add(item7);
+//		this.addMouseListener(this);
+//
+//	}	
 	public void paint() throws JSONException//add text in case two edges go the same direction
 	{
 		
@@ -135,7 +135,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			StdDraw.point(v.getLocation().x(), v.getLocation().y());
 			StdDraw.setPenColor(Color.BLUE);
 			StdDraw.setFont(font);
-			StdDraw.text(v.getLocation().x(), v.getLocation().y()+0.00012, Integer.toString(v.getKey()));
+			StdDraw.text(v.getLocation().x(), v.getLocation().y()+0.00020, Integer.toString(v.getKey()));
 		}
 		StdDraw.setPenRadius(0.005);
 		for (oop_node_data v : Paint_node) {
@@ -465,7 +465,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			StdDraw.point(v.getLocation().x(), v.getLocation().y());
 			StdDraw.setPenColor(Color.BLUE);
 			StdDraw.setFont(font);
-			StdDraw.text(v.getLocation().x(), v.getLocation().y()+0.00012, Integer.toString(v.getKey()));
+			StdDraw.text(v.getLocation().x(), v.getLocation().y()+0.00020, Integer.toString(v.getKey()));
 		}
 		StdDraw.setPenRadius(0.005);
 		for (oop_node_data v : Paint_node) {

@@ -8,9 +8,10 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/java-json.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/Reuveni/eclipse-workspace/OOP-Ex3/lib/GameServer_v0.21.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Reuveni/eclipse-workspace/OOP-Ex3/lib/GameServer_v0.27.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Reuveni/eclipse-workspace/OOP-Ex3/lib/java-json.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Reuveni/eclipse-workspace/OOP-Ex3/lib/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Gal bar/OneDrive/שולחן העבודה/אוניברסיטה/שנה ב/מונחה עצמים/מטלה 2/src/JAR/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Gal bar/OneDrive/שולחן העבודה/אוניברסיטה/שנה ב/מונחה עצמים/מטלה 4/OOP_Ex3/lib/GameServer_v0.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Gal bar/OneDrive/שולחן העבודה/אוניברסיטה/שנה ב/מונחה עצמים/מטלה 4/OOP_Ex3/lib/GameServer_v0.27.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Gal bar/OneDrive/שולחן העבודה/אוניברסיטה/שנה ב/מונחה עצמים/מטלה 4/OOP_Ex3/lib/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Gal bar/OneDrive/שולחן העבודה/אוניברסיטה/שנה ב/מונחה עצמים/מטלה 4/OOP_Ex3/lib/java-json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

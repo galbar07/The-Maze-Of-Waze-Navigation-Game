@@ -46,15 +46,69 @@ public class SimpleGameClient {
 }
 	
 	public static void test1() throws JSONException {
-		int scenario_num = 5;
+		int scenario_num = 11;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		String g = game.getGraph();
 		OOP_DGraph gg = new OOP_DGraph();
 		gg.init(g);
+		Fruit_c fruit = new Fruit_c();
+		Robot_c robot = new Robot_c();
 		
 		String info = game.toString();
+		print_info(info,game);
+		robot.place_robots(game,gg);//place the robots
+		game.startGame();
 		
+		MyGameGUI paint = new MyGameGUI(game);
+		//paint.setVisible(true);
 
+		
+		// should be a Thread!!!
+		while(game.isRunning()) {
+			
+			//robot.moveRobots(game, gg);
+		}
+		String results = game.toString();
+		System.out.println("Game Over: "+results);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	private static void print_info(String info,game_service game) {
+		Fruit_c fruit = new Fruit_c();
+		Robot_c robot = new Robot_c();
+		String g = game.getGraph();
+		OOP_DGraph gg = new OOP_DGraph();
+		gg.init(g);
 		JSONObject line;
 		try {
 			line = new JSONObject(info);
@@ -68,118 +122,34 @@ public class SimpleGameClient {
 			}
 			// the list of fruits should be considered in your solution
 			Iterator<String> f_iter = game.getFruits().iterator();
-			ArrayList<OOP_Edge> fruit_location = new ArrayList<OOP_Edge>();
+			ArrayList<oop_edge_data> fruit_location = new ArrayList<oop_edge_data>();
 			while(f_iter.hasNext()) {
 				JSONObject line2 = new JSONObject(f_iter.next());
 				ttt = line2.getJSONObject("Fruit");
+				int type=ttt.getInt("type");
+				double value=ttt.getInt("value");
 				String p[] = ttt.getString("pos").split(",");
 				OOP_Point3D p_fruit = new OOP_Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
-				oop_edge_data E = assos(p_fruit,game);
+				oop_edge_data E = fruit.assos(p_fruit,game,type);
 				if(E==null) {
 					throw new RuntimeException("The fruit isn't in the graph");
 				}
 				fruit_location.add(new OOP_Edge(E.getSrc(),E.getDest()));
+				if(type==1)
+					System.out.println("apple: the src is "+E.getSrc()+" the dest is "+E.getDest()+ " value" + value);
+				else
+					System.out.println("banana: the src is "+E.getSrc()+" the dest is "+E.getDest()+ " value"+ value);
+
 				
 			}	
-			int src_node = 0;  // arbitrary node, you should start at one of the fruits
-			for(int a = 0;a<rs;a++) {
-				game.addRobot(src_node+a);
-			}
+			
 		}
 		catch (JSONException e) {e.printStackTrace();}
 		
-		game.startGame();
-		MyGameGUI paint = new MyGameGUI(game);
-		paint.setVisible(true);
-
-		Thread t=new Thread();
-		t.start();
-		// should be a Thread!!!
-		while(game.isRunning()) {
-			moveRobots(game, gg);
-		}
-		String results = game.toString();
-		System.out.println("Game Over: "+results);
-	}
-	private static oop_edge_data assos(OOP_Point3D p_fruit,game_service game) {//associate the fruit to the right edge
-		String g = game.getGraph();
-		OOP_DGraph gg = new OOP_DGraph();
-		gg.init(g);
-		
-		Collection<oop_node_data> node_list = gg.getV();
-		
-		for (oop_node_data n : node_list) {
-			
-			
-			Collection<oop_edge_data> edge_list = gg.getE(n.getKey());
-			
-			for (oop_edge_data e : edge_list) {
-				
-				OOP_Point3D p_source =  gg.getNode(e.getSrc()).getLocation();
-				OOP_Point3D p_dest =  gg.getNode(e.getDest()).getLocation();
-				double dist_src_dest=Math.sqrt(Math.pow(p_source.x()-p_dest.x(), 2)+Math.pow(p_source.y()-p_dest.y(), 2));
-				double dist_src_p=Math.sqrt(Math.pow(p_source.x()-p_fruit.x(), 2)+Math.pow(p_source.y()-p_fruit.y(), 2));
-				double dist_dest_p=Math.sqrt(Math.pow(p_dest.x()-p_fruit.x(), 2)+Math.pow(p_dest.y()-p_fruit.y(), 2));
-				double total_dist=dist_src_p+dist_dest_p;
-				if (Math.abs(total_dist-dist_src_dest)<= 0.0000001) {
-					return e;
-				}
-				
-			}
-			
-			
-		}
-		return null;
 	}
 
-	/** 
-	 * Moves each of the robots along the edge, 
-	 * in case the robot is on a node the next destination (next edge) is chosen (randomly).
-	 * @param game
-	 * @param gg
-	 * @param log
-	 */
-	private static void moveRobots(game_service game, oop_graph gg) {
-		List<String> log = game.move();
-		if(log!=null) {
-			long t = game.timeToEnd();
-			for(int i=0;i<log.size();i++) {
-				String robot_json = log.get(i);
-				try {
-					JSONObject line = new JSONObject(robot_json);
-					JSONObject ttt = line.getJSONObject("Robot");
-					int rid = ttt.getInt("id");
-					int src = ttt.getInt("src");
-					int dest = ttt.getInt("dest");
-				
-					if(dest==-1) {	
-						dest = nextNode(gg, src);
-						game.chooseNextEdge(rid, dest);
-						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						System.out.println(ttt);
-					}
-				} 
-				catch (JSONException e) {e.printStackTrace();}
-			}
-		}
-	}
+
 	
-	/**
-	 * a very simple random walk implementation!
-	 * @param g
-	 * @param src
-	 * @return
-	 */
-	private static int nextNode(oop_graph g, int src) {
-		int ans = -1;
-		Collection<oop_edge_data> ee = g.getE(src);
-		Iterator<oop_edge_data> itr = ee.iterator();
-		int s = ee.size();
-		int r = (int)(Math.random()*s);
-		int i=0;
-		while(i<r) {itr.next();i++;}
-		ans = itr.next().getDest();
-		return ans;
-	}
+
 
 }
