@@ -179,11 +179,18 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		Iterator<String> r_iter=robots.iterator(); 
 		JSONObject line2 ;
 	    System.out.println(robots.get(0));
+	    int count=0;
+	    JSONObject line = new JSONObject(this.game.toString());
+	    JSONObject ttt1 = line.getJSONObject("GameServer");
+		int rs = ttt1.getInt("robots");
+	    while(count<rs) {
 			line2 = new JSONObject(r_iter.next().replaceAll("\\s+",""));
 			JSONObject ttt = line2.getJSONObject("Robot");
 			String[] posOfRobots = ttt.getString("pos").split(",");
 			OOP_Point3D p_robot = new OOP_Point3D(Double.parseDouble(posOfRobots[0]),Double.parseDouble(posOfRobots[1])); 
-			StdDraw.picture(p_robot.x(),p_robot.y(),"robot.png",0.0007,0.0007);//change 	
+			StdDraw.picture(p_robot.x(),p_robot.y(),"robot.png",0.0007,0.0007);//change 
+			count++;
+	    }
 		
 	}
 
@@ -435,8 +442,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	
 		while(this.game.isRunning()) {
 			try {
-				
 				paint_random();
+				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

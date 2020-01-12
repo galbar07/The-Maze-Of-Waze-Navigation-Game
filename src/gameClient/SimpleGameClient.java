@@ -46,7 +46,7 @@ public class SimpleGameClient {
 }
 	
 	public static void test1() throws JSONException {
-		int scenario_num = 2;
+		int scenario_num = 5;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		String g = game.getGraph();
 		OOP_DGraph gg = new OOP_DGraph();
@@ -60,7 +60,6 @@ public class SimpleGameClient {
 			line = new JSONObject(info);
 			JSONObject ttt = line.getJSONObject("GameServer");
 			int rs = ttt.getInt("robots");
-			
 			System.out.println(info);
 			System.out.println(g);
 			Iterator<String> fruit_iter = game.getFruits().iterator();
@@ -80,7 +79,6 @@ public class SimpleGameClient {
 					throw new RuntimeException("The fruit isn't in the graph");
 				}
 				fruit_location.add(new OOP_Edge(E.getSrc(),E.getDest()));
-				System.out.println("the fruit is " + E.getSrc()   +"dest" + E.getDest());
 				
 			}	
 			int src_node = 0;  // arbitrary node, you should start at one of the fruits
@@ -123,8 +121,7 @@ public class SimpleGameClient {
 				double dist_src_p=Math.sqrt(Math.pow(p_source.x()-p_fruit.x(), 2)+Math.pow(p_source.y()-p_fruit.y(), 2));
 				double dist_dest_p=Math.sqrt(Math.pow(p_dest.x()-p_fruit.x(), 2)+Math.pow(p_dest.y()-p_fruit.y(), 2));
 				double total_dist=dist_src_p+dist_dest_p;
-				if (Math.abs(total_dist-dist_src_dest)<= 0.0000001) {//check for up (!) to epsilon
-					System.out.println("point is" +n.getLocation());
+				if (Math.abs(total_dist-dist_src_dest)<= 0.0000001) {
 					return e;
 				}
 				
