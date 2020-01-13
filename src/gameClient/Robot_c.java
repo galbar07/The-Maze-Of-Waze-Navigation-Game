@@ -27,6 +27,7 @@ public class Robot_c {
 	 */
 	public void moveRobots(game_service game, oop_graph gg) {
 		List<String> log = game.move();
+		System.out.println("hi ccxvxcvxc" + game.move());
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -60,15 +61,15 @@ public class Robot_c {
 	 * @return
 	 */
 	private static int nextNode(oop_graph g, int src) {
-		int ans = -1;
-		Collection<oop_edge_data> ee = g.getE(src);
-		Iterator<oop_edge_data> itr = ee.iterator();
-		int s = ee.size();
-		int r = (int)(Math.random()*s);
-		int i=0;
-		while(i<r) {itr.next();i++;}
-		ans = itr.next().getDest();
-		return ans;
+		
+		
+		
+		
+		
+		
+		
+		
+		return 0;
 	}
 
 
@@ -97,7 +98,7 @@ public class Robot_c {
 			double value=ttt.getDouble("value");
 			String p[] = ttt.getString("pos").split(",");
 			OOP_Point3D p_fruit = new OOP_Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
-			oop_edge_data E = temp.assos(p_fruit,game,type);
+			oop_edge_data E = temp.assos(p_fruit,game,type);//Maybe add value for 2 fruits on the same edge
 			fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
 			
 		}

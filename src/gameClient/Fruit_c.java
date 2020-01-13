@@ -48,6 +48,11 @@ public class Fruit_c {
 		
 		return this.type;
 	}
+	
+	public void setValue(double value) {
+		this.value+=value;
+	}
+	
 
 	/**
 	 * Associate fruit to edge
