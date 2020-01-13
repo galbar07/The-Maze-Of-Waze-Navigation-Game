@@ -20,10 +20,10 @@ public class Robot_c {
 	
 	/** 
 	 * Moves each of the robots along the edge, 
-	 * in case the robot is on a node the next destination (next edge) is chosen (randomly).
-	 * @param game
-	 * @param gg
-	 * @param log
+	 * in case the robot is on a node the next destination (next edge) is chosen.
+	 * @param game the given game from the server
+	 * @param gg the graph made out of the game
+	 * @param log a list of all the moves
 	 */
 	public void moveRobots(game_service game, oop_graph gg) {
 		List<String> log = game.move();
@@ -71,14 +71,20 @@ public class Robot_c {
 		return ans;
 	}
 
-
+	/**
+	 * this function places the first robot on the src node of the edge
+	 * which has the fruit with the biggest value, the second robot on the src
+	 * node of the edge which has the fruit with the second max value etc.
+	 * @param game the given game from the server
+	 * @param gg the graph made out of the game
+	 */
 
 
 	public void place_robots(game_service game, oop_graph gg) {
-		String g = game.getGraph();	
+		//String g = game.getGraph();	
 		Fruit_c temp = new Fruit_c();
 		ArrayList<Fruit_c> fruits = new ArrayList<Fruit_c>();
-		
+		//this array list will hold all the fruits
 		JSONObject line;
 		String info = game.toString();
 		int num_robots=0;
@@ -90,6 +96,7 @@ public class Robot_c {
 		
 		
 		Iterator<String> f_iter = game.getFruits().iterator();
+		//goes through all the fruits
 		while(f_iter.hasNext()) {
 			JSONObject line2 = new JSONObject(f_iter.next());
 			ttt = line2.getJSONObject("Fruit");
@@ -98,6 +105,7 @@ public class Robot_c {
 			String p[] = ttt.getString("pos").split(",");
 			OOP_Point3D p_fruit = new OOP_Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
 			oop_edge_data E = temp.assos(p_fruit,game,type);
+			//each fruit will be associated to its edge
 			fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
 			
 		}
@@ -109,23 +117,23 @@ public class Robot_c {
 		int rm=0;
 		
 		for(int i=0;i<num_robots;i++) {
-			
+			//there is no need to run for more then the number of robots
 			for (int j = 0; j < fruits.size(); j++) {
-				
+				//for every fruit in the list 
 				if(max_value<fruits.get(j).getValue()) {
 					max_value = fruits.get(j).getValue();
+					//holds the max value
 					rm = j;
 				}
 				
 			}
-			
-			if(fruits.get(rm).getType()==1)
 				game.addRobot(fruits.get(rm).getSrc());
-			else
-				game.addRobot(fruits.get(rm).getSrc());
+				//add the robot in the index you found
 		
 			max_value = Double.MIN_VALUE;
 			fruits.remove(rm);
+			//remove that fruit from the list so the second robot will be placed
+			//in the second max value and so on
 			rm=0;
 			
 		}

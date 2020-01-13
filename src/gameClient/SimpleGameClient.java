@@ -66,7 +66,7 @@ public class SimpleGameClient {
 		// should be a Thread!!!
 		while(game.isRunning()) {
 			
-			//robot.moveRobots(game, gg);
+			robot.moveRobots(game, gg);
 		}
 		String results = game.toString();
 		System.out.println("Game Over: "+results);
