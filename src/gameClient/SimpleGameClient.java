@@ -52,7 +52,7 @@ public class SimpleGameClient {
 		OOP_DGraph gg = new OOP_DGraph();
 		gg.init(g);
 		Fruit_c fruit = new Fruit_c();
-		Robot_c robot = new Robot_c();
+		Robot_c robot = new Robot_c(game);
 		
 		String info = game.toString();
 		print_info(info,game);
@@ -105,7 +105,7 @@ public class SimpleGameClient {
 
 	private static void print_info(String info,game_service game) {
 		Fruit_c fruit = new Fruit_c();
-		Robot_c robot = new Robot_c();
+		Robot_c robot = new Robot_c(game);
 		String g = game.getGraph();
 		OOP_DGraph gg = new OOP_DGraph();
 		gg.init(g);
@@ -135,11 +135,6 @@ public class SimpleGameClient {
 					throw new RuntimeException("The fruit isn't in the graph");
 				}
 				fruit_location.add(new OOP_Edge(E.getSrc(),E.getDest()));
-				if(type==1)
-					System.out.println("apple: the src is "+E.getSrc()+" the dest is "+E.getDest()+ " value" + value);
-				else
-					System.out.println("banana: the src is "+E.getSrc()+" the dest is "+E.getDest()+ " value"+ value);
-
 				
 			}	
 			
