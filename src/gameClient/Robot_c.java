@@ -11,9 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import Server.game_service;
+import algorithms.Graph_Algo;
+import dataStructure.node_data;
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
+import oop_dataStructure.oop_node_data;
 import oop_elements.OOP_Edge;
 import oop_utils.OOP_Point3D;
 
@@ -22,6 +25,8 @@ public class Robot_c implements Comparable<Fruit_c> {
 	private ArrayList<Fruit_c> all_fruits;
 	private ArrayList<Fruit_c> fruits_available;
 	private ArrayList<Robot_c>game_robots;
+	private static List<node_data> list_to_go_through;
+	//????
 	
 	
 	
@@ -29,6 +34,7 @@ public class Robot_c implements Comparable<Fruit_c> {
 		this.game_=game;
 		this.all_fruits=get_fruits(game);
 		this.fruits_available=get_fruits(game);
+		this.list_to_go_through=null;
 		for(int i=0;i<game.getRobots().size();i++) {
 			
 		}
@@ -57,7 +63,7 @@ public class Robot_c implements Comparable<Fruit_c> {
 					int dest = ttt.getInt("dest");
 
 					if(dest==-1) {	
-						dest = nextNode(game,gg, src);
+						dest = nextNode(game,gg, src,rid,get_fruits(game));
 						game.chooseNextEdge(rid, dest);
 						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
 						System.out.println(ttt);
@@ -91,6 +97,7 @@ public class Robot_c implements Comparable<Fruit_c> {
 				oop_edge_data E = temp.assos(p_fruit,game,type);
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
+			//	shortestPath(E.getSrc(),E.getDest());
 
 			}
 			
@@ -115,13 +122,41 @@ public class Robot_c implements Comparable<Fruit_c> {
 	 * @param src
 	 * @return
 	 */
-	private static int nextNode(game_service game, oop_graph g, int src) {
+	private static int nextNode(game_service game, oop_graph g, int src, int id, ArrayList<Fruit_c>fruits) {
 		
+		if (id<0)
+			//if there is no path to any of the fruits
+			throw new RuntimeException("There is no path to any fruit");
+		double most_expensive_fruit=fruits.get(id).getValue()%fruits.size();
+		//can't remember where and if we use it
+		String graph = game.getGraph();
+		OOP_DGraph gg = new OOP_DGraph();
+		Graph_Algo gr=new Graph_Algo();
+		gg.init(graph);
+		gr.init(graph);
+		int type=fruits.get(id).getType();
+		if (type==-1) {
+			//if it's a banana- find the shortestPath from your current position to its src node
+			list_to_go_through=gr.shortestPath(src ,fruits.get(id).getSrc()); 
+			//and from it to its dest node
+			list_to_go_through=gr.shortestPath(list_to_go_through.get(0).getKey(), fruits.get(id).getDest());
+		}
+		else {
+			//if it's an apple- find the shortestPath from your current position to its dest node
+			list_to_go_through=gr.shortestPath(src ,fruits.get(id).getDest()); 
+			//and from it to its src node
+			list_to_go_through=gr.shortestPath(list_to_go_through.get(0).getKey(), fruits.get(id).getSrc());
+			
+		}
+		if (list_to_go_through==null) {
+			//if there is no path, return recursively with the first fruit 
+			//which no robot is aimed to
+			int size_of_list=list_to_go_through.size();
+			nextNode(game, gg, src, size_of_list--, fruits);
+		}
 		
-		
-		
-		
-		return 0;
+		return list_to_go_through.get(0).getKey();
+		//??????
 	}
 
 	/**
