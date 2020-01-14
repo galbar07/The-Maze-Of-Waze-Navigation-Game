@@ -169,11 +169,13 @@ public class Graph_Algo implements graph_algorithms,java.io.Serializable{
 	 * @return
 	 */
 	@Override
-	public List<node_data> shortestPath(int src, int dest) {
+	/*public List<node_data> shortestPath(int src, int dest) {
 		boolean stop = false;
-		if (this.graph_algo.getNode(src)==null || (this.graph_algo.getNode(dest)==null))
+		if (this.graph_algo.getNode(src)==null || (this.graph_algo.getNode(dest)==null)) {
 			//if either of the src and dest nodes isn't in the graph	
+			System.out.println("first null");
 			return null;
+		}
 		ArrayList<node_data>List = new ArrayList<node_data>();
 		Collection<node_data> dij = this.graph_algo.getV();
 		PriorityQueue<node_data> queue = new PriorityQueue<node_data>();
@@ -222,9 +224,11 @@ public class Graph_Algo implements graph_algorithms,java.io.Serializable{
 		String str = "";
 		int search = dest;
 		node_data node = this.graph_algo.getNode(dest);
-		if(node.getWeight()== Double.MAX_VALUE)
+		if(node.getWeight()== Double.MAX_VALUE) {
 			//if dest weight stayed infinity- there is no path from src to it
-			return null;		
+			System.out.println("second null");
+			return null;
+		}
 		while(!node.getInfo().equals("null")) {
 			//add all the nodes you went through, according to their info
 			str = node.getInfo();
@@ -234,11 +238,15 @@ public class Graph_Algo implements graph_algorithms,java.io.Serializable{
 		}
 		List.add(this.graph_algo.getNode(src));
 		Collections.reverse(List);
-		if (!List.contains(this.graph_algo.getNode(dest)))	
+		if (!List.contains(this.graph_algo.getNode(dest)))	{
 			//if the list doesn't contain dest- there is no path between src to it
+			System.out.println("third null");
+
 			return null;
+		}
 		return List;
-	}
+	}*/
+
 	/**
 	 * Computes a relatively short path which visit each node in the targets List.
 	 * Note: this is NOT the classical traveling salesman problem, 

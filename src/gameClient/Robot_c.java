@@ -11,35 +11,52 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import Server.game_service;
+import Server.robot;
 import algorithms.Graph_Algo;
+import dataStructure.DGraph;
+import dataStructure.edge_data;
+import dataStructure.graph;
 import dataStructure.node_data;
-import oop_dataStructure.OOP_DGraph;
-import oop_dataStructure.oop_edge_data;
-import oop_dataStructure.oop_graph;
-import oop_dataStructure.oop_node_data;
-import oop_elements.OOP_Edge;
-import oop_utils.OOP_Point3D;
+import utils.Point3D;
 
-public class Robot_c implements Comparable<Fruit_c> {
-	private game_service game_;
-	private ArrayList<Fruit_c> all_fruits;
-	private ArrayList<Fruit_c> fruits_available;
-	private ArrayList<Robot_c>game_robots;
-	private static List<node_data> list_to_go_through;
-	//????
+public class Robot_c {
+	private static game_service game_;
+	private static ArrayList<Fruit_c> all_fruits;
+	private static ArrayList<robot_inner>game_robots;
 	
 	
 	
 	public Robot_c(game_service game) {
-		this.game_=game;
-		this.all_fruits=get_fruits(game);
-		this.fruits_available=get_fruits(game);
-		this.list_to_go_through=null;
-		for(int i=0;i<game.getRobots().size();i++) {
+		Robot_c.game_=game;
+		Robot_c.all_fruits=get_fruits(game);
+		JSONObject line;
+		String info = game.toString();
+		try {
+			
+			line = new JSONObject(info);
+			JSONObject ttt = line.getJSONObject("GameServer");
+			int rs = ttt.getInt("robots");
+			Robot_c.game_robots = getRobots(game, rs);
+				
 			
 		}
+			catch (JSONException e) {e.printStackTrace();}
+	
 		
 	}
+	
+	
+	public ArrayList<robot_inner>getRobots(game_service game,int robot_size){
+		ArrayList<robot_inner> rob = new ArrayList<robot_inner>();
+		for(int i=0;i<robot_size;i++) {
+			List<node_data> n1 = null;
+			robot_inner ri = new robot_inner(n1);
+			rob.add(ri);
+		}
+		return rob;
+		
+	}
+	
 
 	/** 
 	 * Moves each of the robots along the edge, 
@@ -48,7 +65,7 @@ public class Robot_c implements Comparable<Fruit_c> {
 	 * @param gg the graph made out of the game
 	 * @param log a list of all the moves
 	 */
-	public void moveRobots(game_service game, oop_graph gg) {
+	public void moveRobots(game_service game, graph gg) {
 		List<String> log = game.move();
 		//System.out.println( game.move());
 		if(log!=null) {
@@ -61,13 +78,23 @@ public class Robot_c implements Comparable<Fruit_c> {
 					int rid = ttt.getInt("id");
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
-
-					if(dest==-1) {	
-						dest = nextNode(game,gg, src,rid,get_fruits(game));
-						game.chooseNextEdge(rid, dest);
-						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						System.out.println(ttt);
+					
+					//  id = 0
+					//|  null   |
+					if(Robot_c.game_robots.get(rid).list_to_go_through==null  ||(dest ==-1 && Robot_c.game_robots.get(rid).list_to_go_through.size()==1)) {
+						Robot_c.game_robots.get(rid).list_to_go_through = nextNode(src,rid,Robot_c.game_robots.get(rid).list_to_go_through);
 					}
+					if(Robot_c.game_robots.get(rid).list_to_go_through!=null && Robot_c.game_robots.get(rid).list_to_go_through.size()>1) {
+					// 3->2
+						Robot_c.game_.chooseNextEdge(rid,Robot_c.game_robots.get(rid).list_to_go_through.get(1).getKey());
+						Robot_c.game_robots.get(rid).list_to_go_through.remove(1);
+						//System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
+						//System.out.println(ttt);
+					}
+						Robot_c.all_fruits=get_fruits(game);//Fruit update
+//						if (Robot_c.game_robots.get(rid).list_to_go_through.contains(gg.getNode(src))&&Robot_c.game_robots.get(rid).list_to_go_through.size()==1)
+//							dest=-1;
+					
 				} 
 				catch (JSONException e) {e.printStackTrace();}
 			}
@@ -93,8 +120,8 @@ public class Robot_c implements Comparable<Fruit_c> {
 				int type=ttt.getInt("type");
 				double value=ttt.getDouble("value");
 				String p[] = ttt.getString("pos").split(",");
-				OOP_Point3D p_fruit = new OOP_Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
-				oop_edge_data E = temp.assos(p_fruit,game,type);
+				Point3D p_fruit = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
+				edge_data E = temp.assos(p_fruit,game,type);
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
 			//	shortestPath(E.getSrc(),E.getDest());
@@ -106,10 +133,7 @@ public class Robot_c implements Comparable<Fruit_c> {
 }
 		catch (JSONException e) {e.printStackTrace();}
 
-		
-		
-		
-		
+
 		return fruits;
 	}
 
@@ -122,41 +146,52 @@ public class Robot_c implements Comparable<Fruit_c> {
 	 * @param src
 	 * @return
 	 */
-	private static int nextNode(game_service game, oop_graph g, int src, int id, ArrayList<Fruit_c>fruits) {
+	private static List <node_data> nextNode(int src, int id,List<node_data>list_to_go_through) {
 		
 		if (id<0)
 			//if there is no path to any of the fruits
 			throw new RuntimeException("There is no path to any fruit");
-		double most_expensive_fruit=fruits.get(id).getValue()%fruits.size();
-		//can't remember where and if we use it
-		String graph = game.getGraph();
-		OOP_DGraph gg = new OOP_DGraph();
+		DGraph gg = new DGraph();
+		gg.init(Robot_c.game_.getGraph());
 		Graph_Algo gr=new Graph_Algo();
-		gg.init(graph);
-		gr.init(graph);
-		int type=fruits.get(id).getType();
+		gr.init(gg);
+		
+		
+		
+		
+		int type=Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getType();
+		//System.out.println(type);
 		if (type==-1) {
 			//if it's a banana- find the shortestPath from your current position to its src node
-			list_to_go_through=gr.shortestPath(src ,fruits.get(id).getSrc()); 
+			
+			list_to_go_through=gr.shortestPath(src ,Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getSrc()); 
 			//and from it to its dest node
-			list_to_go_through=gr.shortestPath(list_to_go_through.get(0).getKey(), fruits.get(id).getDest());
+			if(list_to_go_through==null) { return null;
+			//	int new_id=Robot_c.game_robots.size()-1;
+				//return nextNode(src, new_id, list_to_go_through);
+			}
+			list_to_go_through.add(gg.getNode(Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest()));
+			
+					//gr.shortestPath(list_to_go_through.get(0).getKey(), Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest());
 		}
 		else {
 			//if it's an apple- find the shortestPath from your current position to its dest node
-			list_to_go_through=gr.shortestPath(src ,fruits.get(id).getDest()); 
+		
+			
+			list_to_go_through=gr.shortestPath(src ,Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest()); 
 			//and from it to its src node
-			list_to_go_through=gr.shortestPath(list_to_go_through.get(0).getKey(), fruits.get(id).getSrc());
+			if(list_to_go_through.size()<=0) { return null;
+//				int new_id=Robot_c.game_robots.size()-1;
+//				return nextNode(src, new_id, list_to_go_through);
+				}
+			list_to_go_through.add(gg.getNode(Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getSrc()));
 			
 		}
-		if (list_to_go_through==null) {
-			//if there is no path, return recursively with the first fruit 
-			//which no robot is aimed to
-			int size_of_list=list_to_go_through.size();
-			nextNode(game, gg, src, size_of_list--, fruits);
+
+		for(int i=0;i<list_to_go_through.size();i++) {
+			System.out.print("targets are \t " + list_to_go_through.get(i).getKey());
 		}
-		
-		return list_to_go_through.get(0).getKey();
-		//??????
+		return list_to_go_through;
 	}
 
 	/**
@@ -168,7 +203,7 @@ public class Robot_c implements Comparable<Fruit_c> {
 	 */
 
 
-	public void place_robots(game_service game, oop_graph gg) {
+	public void place_robots(game_service game, graph gg) {
 		//String g = game.getGraph();	
 		Fruit_c temp = new Fruit_c();
 		ArrayList<Fruit_c> fruits = new ArrayList<Fruit_c>();
@@ -191,16 +226,14 @@ public class Robot_c implements Comparable<Fruit_c> {
 				int type=ttt.getInt("type");
 				double value=ttt.getDouble("value");
 				String p[] = ttt.getString("pos").split(",");
-				OOP_Point3D p_fruit = new OOP_Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
-				oop_edge_data E = temp.assos(p_fruit,game,type);
+				Point3D p_fruit = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
+				edge_data E = temp.assos(p_fruit,game,type);
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
 
 			}
 		}
 		catch (JSONException e) {e.printStackTrace();}
-
-
 		double max_value = Double.MIN_VALUE;
 		int rm=0;
 
@@ -224,17 +257,25 @@ public class Robot_c implements Comparable<Fruit_c> {
 			//in the second max value and so on
 			rm=0;
 
-
-
-
 		}
 
 
 	}
+	
 
-	@Override
-	public int compareTo(Fruit_c o) {
-		
-		return 0;
-	}
+
 }
+//constructor for inner help
+	class robot_inner{
+	  List<node_data> list_to_go_through;
+		
+		public robot_inner(List<node_data> list_to_go_through) {
+			this.list_to_go_through = list_to_go_through;
+			
+		}
+		public int getSize() {
+			return this.list_to_go_through.size();
+		}
+
+
+	}

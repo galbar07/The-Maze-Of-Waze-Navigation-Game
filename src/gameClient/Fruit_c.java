@@ -3,13 +3,10 @@ package gameClient;
 import java.util.Collection;
 
 import Server.game_service;
-import dataStructure.node_data;
-import oop_dataStructure.OOP_DGraph;
+import dataStructure.*;
+import utils.Point3D;
+
 import java.util.Comparator;
-import oop_dataStructure.oop_edge_data;
-import oop_dataStructure.oop_node_data;
-import oop_elements.OOP_Edge;
-import oop_utils.OOP_Point3D;
 
 public class Fruit_c {
 	private int type;
@@ -90,22 +87,22 @@ public int getTag() {
 	 * @param type
 	 * @return its edge, null if there is no edge for this fruit
 	 */
-	public oop_edge_data assos(OOP_Point3D p_fruit,game_service game, int type) {
+	public edge_data assos(Point3D p_fruit,game_service game, int type) {
 		String g = game.getGraph();
-		OOP_DGraph gg = new OOP_DGraph();
+		DGraph gg = new DGraph();
 		gg.init(g);
 		
-		Collection<oop_node_data> node_list = gg.getV();
+		Collection<node_data> node_list = gg.getV();
 		
-		for (oop_node_data n : node_list) {
+		for (node_data n : node_list) {
 			//for every node in the graph
 			
-			Collection<oop_edge_data> edge_list = gg.getE(n.getKey());
+			Collection<edge_data> edge_list = gg.getE(n.getKey());
 			
-			for (oop_edge_data e : edge_list) {
+			for (edge_data e : edge_list) {
 				//for every edge in the hash map with the src node n
-				OOP_Point3D p_source =  gg.getNode(e.getSrc()).getLocation();
-				OOP_Point3D p_dest =  gg.getNode(e.getDest()).getLocation();
+				Point3D p_source =  gg.getNode(e.getSrc()).getLocation();
+				Point3D p_dest =  gg.getNode(e.getDest()).getLocation();
 				double dist_src_dest=Math.sqrt(Math.pow(p_source.x()-p_dest.x(), 2)+Math.pow(p_source.y()-p_dest.y(), 2));
 				double dist_src_p=Math.sqrt(Math.pow(p_source.x()-p_fruit.x(), 2)+Math.pow(p_source.y()-p_fruit.y(), 2));
 				double dist_dest_p=Math.sqrt(Math.pow(p_dest.x()-p_fruit.x(), 2)+Math.pow(p_dest.y()-p_fruit.y(), 2));
@@ -113,7 +110,7 @@ public int getTag() {
 				if (Math.abs(total_dist-dist_src_dest) <= 0.0000001) {
 					if (type==-1)
 						//if it's a banana
-						return new OOP_Edge(e.getDest(), e.getSrc());
+						return new EdgeData(e.getDest(), e.getSrc(),0);
 					else //if it's an apple
 						return e;
 					
