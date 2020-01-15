@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
@@ -11,22 +12,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileSystemView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import Server.Fruit;
+import Server.Game_Server;
 import Server.game_service;
 import algorithms.Graph_Algo;
 import dataStructure.*;
@@ -43,28 +50,27 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	static int i=0;
 	static int mc=0;
 	Thread t ;
+	double max_x;
+	double min_x;
+	double max_y;
+	double min_y;
+	
 	
 	public MyGameGUI(game_service game) throws JSONException {
+		initGUI();
 		this.game = game;
 		gg = new DGraph();
-		set_scale();
-		//initGUI();
-		StdDraw.enableDoubleBuffering();
-		//StdDraw.show();
-		 t = new Thread(this);
-		t.start();
 	}
-	private void set_scale() throws JSONException {
+	private void set_scale(int mode) throws JSONException {
 		
 		StdDraw.setCanvasSize(800,800);
 
-		double max_x = Double.MIN_VALUE;
-		double max_y = Double.MIN_VALUE;
-		double min_x = Double.MAX_VALUE;
-		double min_y = Double.MAX_VALUE;
+		this.max_x = Double.MIN_VALUE;
+		this.max_y = Double.MIN_VALUE;
+		this.min_x = Double.MAX_VALUE;
+		this.min_y = Double.MAX_VALUE;
 	
 		gg.init(this.game.getGraph());
-		gg.getV();
 		Collection<node_data>search = gg.getV();
 		for (node_data v : search) {
 			max_x = Math.max(max_x, v.getLocation().x());
@@ -75,7 +81,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		}
 		StdDraw.setXscale(min_x-0.002,max_x+0.002);
 		StdDraw.setYscale(min_y-0.002,max_y+0.002);
-		paint();
+		paint(mode);
 	}
 	
 
@@ -112,10 +118,9 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		this.addMouseListener(this);
 
 	}	
-	public void paint() throws JSONException//add text in case two edges go the same direction
+	public void paint(int mode) throws JSONException//add text in case two edges go the same direction
 	{
-		
-		
+
 		Font font = new Font("Arial", Font.BOLD, 15);
 		StdDraw.setPenRadius(0.02);
 		Collection<node_data> Paint_node = gg.getV();
@@ -152,15 +157,19 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 						Point3D p5 = new Point3D((p4.x()+p1.x())/2,(p4.y()+p1.y())/2);
 						p4 = new Point3D(p5);
 					}
-					StdDraw.point(p4.x(),p4.y());
+					StdDraw.point(p4.x(),p4.y());					
 
 				}
+				
+				
 			}
 		
 		}
 		
 		paint_fruit();
+			if(mode==1){
 		paint_robots();
+		}
 	}
 	
 	private void paint_robots() throws JSONException {
@@ -208,144 +217,6 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		System.out.println(count);
 	}
 
-//	private void drawfromfile() {
-//		JFileChooser jf = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-//		int returnV = jf.showOpenDialog(null);
-//		Graph_Algo gr = new Graph_Algo();
-//		if (returnV == JFileChooser.APPROVE_OPTION) {
-//			File selected = jf.getSelectedFile();
-//			gr.init(selected.getAbsolutePath());
-//		}
-//		this.graph = gr.copy();
-//		paint();
-//	}
-
-//	private void Savetofile() {
-//		try {
-//			Graph_Algo gr = new Graph_Algo();
-//			gr.init(this.graph);
-//			JFileChooser jf = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-//			int returnV = jf.showOpenDialog(null);
-//			if (returnV == JFileChooser.APPROVE_OPTION) {
-//				gr.save(jf.getSelectedFile()+".txt");
-//
-//			}
-//			JFrame Show = new JFrame();
-//			JOptionPane.showMessageDialog(Show,"The Graph was successfully saved");
-//
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-//	private void Shortest_path_distance() {
-//		try {
-//			JFrame Show = new JFrame();
-//			paint();
-//			String Src = JOptionPane.showInputDialog(Show,"Enter Source-Node:");
-//			String Dest = JOptionPane.showInputDialog(Show,"Enter Destination-Node:");	
-//			int src = Integer.parseInt(Src);
-//			int dest = Integer.parseInt(Dest);	
-//			Graph_Algo gr = new Graph_Algo();
-//			gr.init(this.graph);
-//			paint();
-//			double num = gr.shortestPathDist(src, dest);
-//			JOptionPane.showMessageDialog(Show,"The 'cost' of the shortest path is: " + num);
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-
-//	private void isconneted() {
-//
-//		JFrame Show = new JFrame();
-//		Graph_Algo gr = new Graph_Algo();
-//		gr.init(this.graph);
-//		paint();
-//		if (gr.isConnected()) 
-//			JOptionPane.showMessageDialog(Show,"The Graph is connected");	
-//		else
-//			JOptionPane.showMessageDialog(Show,"The Graph is not connected");	
-//	}
-
-
-
-//	private void Shortest_path() {
-//		try {
-//			JFrame Show = new JFrame();
-//			paint();
-//			String Src = JOptionPane.showInputDialog(Show,"Enter Source Node:");
-//			String Dest = JOptionPane.showInputDialog(Show,"Enter Destination Node:");
-//
-//			int src = Integer.parseInt(Src);
-//			int dest = Integer.parseInt(Dest);
-//
-//			Graph_Algo gr = new Graph_Algo();
-//			gr.init(this.graph);
-//			String res = "";			
-//			List<node_data> list = gr.shortestPath(src, dest);
-//			if (list==null)
-//				JOptionPane.showMessageDialog(Show,"There is no path between the source and destinetion node");	
-//			else {
-//
-//				for(int i=0;i<list.size();i++) {
-//					if(i==list.size()-1) {
-//						res+=list.get(i).getKey();
-//					}
-//					else {
-//						res+=list.get(i).getKey()+"->";
-//					}
-//
-//				}
-//				JOptionPane.showMessageDialog(Show,"The Graph Shorthest path from src to dest is : " + res);	
-//			}
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//
-//	}
-
-
-
-//	private void tsp() {
-//
-//		Graph_Algo gr = new Graph_Algo();
-//		gr.init(this.graph);
-//
-//		JFrame Show = new JFrame();
-//		paint();
-//		String num = JOptionPane.showInputDialog(Show,"Enter number of elements:");
-//		int key = Integer.parseInt(num);
-//		List<Integer>list = new ArrayList<Integer>();
-//		for(int i=0;i<key;i++) {
-//			String num2 = JOptionPane.showInputDialog(Show,"Enter vertices:");
-//			int key2 = Integer.parseInt(num2);
-//			list.add(key2);
-//		}
-//		List<node_data>tspList = gr.TSP(list);
-//		String res="";
-//		if(tspList==null) {
-//			JOptionPane.showMessageDialog(Show,"There is no path between all nodes you entered");
-//
-//		} 
-//		else {
-//			for(int i=0;i<tspList.size();i++) {
-//
-//				if(i==tspList.size()-1) {
-//					res+=""+tspList.get(i).getKey();
-//				}
-//				else {
-//					res+=""+tspList.get(i).getKey()+"->";
-//				}
-//			}
-//			JOptionPane.showMessageDialog(Show,"The Graph relatively short path between the vertices you entered is: " + res);	
-//		}
-//	}
 
 	private Point3D pointreturn(int key) {
 		Collection<node_data> Paint_node = gg.getV();
@@ -386,46 +257,141 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		String str = e.getActionCommand();
 		switch(str)
 		{
-		case "Draw Graph":
+		case "Automatic":
 			try {
-				paint();
+				try {
+					paintAuto();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			} catch (JSONException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			break;
+			
+		case "Manual":
+			try {
+				try {
+					paintManual();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			break;
-//		case "Draw from file": drawfromfile();
-//		break;
-//		case "Save to file": Savetofile();
-//		break;
-//		case "find Shortest path distance":Shortest_path_distance();
-//		break;
-//		case "find Shortest path":Shortest_path();
-//		break;
-//		case "Is connected":isconneted();
-//		break;
-//		case "TSP":tsp();
-//		break;
 		}
 	}
-//	@Override
-//	public void run() {
-//		while(true) {
-//			if(graph.getMC() != mc) {
-//				mc=graph.getMC();
-//				synchronized (this) {
-//					paint();		
-//				}						
-//			}
-//			try {
-//				Thread.sleep(500);
-//			}
-//			catch (Exception e) {
-//			}
-//		}
-//	}
+	//locate the robots in manual mode
+	public void locate_robots() {
+		String info = this.game.toString();
+		JSONObject line;
+		try {
+			
+			line = new JSONObject(info);
+			JSONObject ttt = line.getJSONObject("GameServer");
+			System.out.println(info);
+			int robot_size = ttt.getInt("robots");		
+			System.out.println("robot size is " + robot_size);
+		
+		for(int i=0;i<robot_size;i++) {
+			 String inputString = JOptionPane.showInputDialog(null, "Enter location for the robot " + i);
+			 int input = Integer.parseInt(inputString);
+			 game.addRobot(input);
+		}
+		}
+		catch (JSONException e) {e.printStackTrace();}
+	}
+	
+	//only neigbours 
+	private void manulmode() {
+		List<String> log = this.game.move();
+		//System.out.println( game.move());
+		if(log!=null) {
+			long t = game.timeToEnd();
+			for(int i=0;i<log.size();i++) {
+				String robot_json = log.get(i);
+				try {
+					JSONObject line = new JSONObject(robot_json);
+					JSONObject ttt = line.getJSONObject("Robot");
+					int id = ttt.getInt("id");
+					int src = ttt.getInt("src");
+					int dest = ttt.getInt("dest");
+					
+					if(dest == -1) {
+						String inputString = JOptionPane.showInputDialog(null, "Enter next node for robot" + id);
+				        dest = Integer.parseInt(inputString);
+				        this.game.chooseNextEdge(id, dest);
+					}
+			    }
+			
+				catch (JSONException e) {e.printStackTrace();}
+			}
+		
+	}
+}
+	//Manual mode
+	private void paintManual() throws JSONException, IOException {
+        String inputString = JOptionPane.showInputDialog(null, "INPUT LEVEL");
+        int input = Integer.parseInt(inputString);
+    	game_service game = Game_Server.getServer(input);
+    	String g = game.getGraph();
+    	DGraph gg = new DGraph();
+		gg.init(g);
+		this.game = game;
+		this.gg = gg;
+		set_scale(0);
+		locate_robots();
+		game.startGame();
+		t = new Thread(this);
+		t.start();
+		
+		while(game.isRunning()) {
+			manulmode();
+		}
+		gameover();
+		
+	}
 
-	@SuppressWarnings("deprecation")
+	private void paintAuto() throws JSONException, IOException {
+		    String inputString = JOptionPane.showInputDialog(null, "INPUT LEVEL");
+	        int input = Integer.parseInt(inputString);
+	    	game_service game = Game_Server.getServer(input);
+	    	String g = game.getGraph();
+	    	DGraph gg = new DGraph();
+			gg.init(g);
+			this.game = game;
+			this.gg = gg;
+			Robot_c rob = new Robot_c(this.game);
+			rob.place_robots(game, gg);
+			set_scale(1);
+			t = new Thread(this);
+			t.start();
+			game.startGame();
+			
+			while(game.isRunning()) {
+				rob.moveRobots(this.game, gg);
+			}
+//			gameover();
+
+		
+		
+	}
+	
+	
+	private void gameover() throws IOException {
+		
+		BufferedImage image = ImageIO.read(new File("gameover.png"));
+		this.getGraphics().drawImage(image, 90, 100, 400,400, null);
+		this.getGraphics().drawString("Results is " + this.game.toString(), 90, 80);
+		StdDraw.setCanvasSize(1,1);
+
+	}
+	
 	@Override
 	public void run() {
 	
@@ -456,7 +422,10 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			StdDraw.setFont(font);
 			StdDraw.text(v.getLocation().x(), v.getLocation().y()+0.00020, Integer.toString(v.getKey()));
 		}
+		
 		StdDraw.setPenRadius(0.005);
+		StdDraw.setPenColor(Color.RED);
+		StdDraw.text(this.max_x-0.001, this.max_y, "Time remaining :" + this.game.timeToEnd()/1000);//need to find the formula
 		for (node_data v : Paint_node) {
 			Collection<edge_data> Paint_edges = gg.getE(v.getKey());
 			if(Paint_edges==null)
@@ -483,7 +452,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 						p4 = new Point3D(p5);
 					}
 					StdDraw.point(p4.x(),p4.y());
-
+					
 				}
 			}
 		

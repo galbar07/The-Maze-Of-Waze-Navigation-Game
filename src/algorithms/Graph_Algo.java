@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import dataStructure.DGraph;
 import dataStructure.edge_data;
@@ -427,100 +425,6 @@ public class Graph_Algo implements graph_algorithms
 		ver.remove(index);
 		return minVer;
 	}
-	
-	/**
-	 * Determines which of the nodes in the graph are 
-	 * connected by an edge, meaning- this node's neighbors
-	 * and counts them
-	 * @param v the given node
-	 * @return the amount of neighbors
-	 */
-	private int myNeighbors(node_data v) {
-		int ans=0;
-		//colorWhite(g.getV());
-		Stack<node_data> s=new Stack<node_data>();
-		s.push(v);
-		while (!s.isEmpty()) {
-			node_data nd=s.pop();
-			if (nd.getTag()==0) {
-				//as long as this node wasn't visited
-				ans++;
-				ArrayList<node_data> T = allWhiteNeighbors(nd);
-				//put into T the neighbors that wasn't visited 
-				nd.setTag(1);
-				for (int i = 0; i < T.size(); i++) {
-					s.push(T.get(i));
-				}
-			}
-		}
-		return ans;
-	}
-	
-	public ArrayList<node_data> myNeighborsList(node_data v){
-		//int ans=0;
-		//colorWhite(this.g.getV());
-		Stack<node_data> s=new Stack<node_data>();
-		s.push(v);
-		ArrayList<node_data> T=new ArrayList<>();
-		while (!s.isEmpty()) {
-			node_data nd=s.pop();
-			if (nd.getTag()==0) {
-				 T = allWhiteNeighbors(nd);
-				//put into T the neighbors that wasn't visited 
-				nd.setTag(1);
-				for (int i = 0; i < T.size(); i++) {
-					s.push(T.get(i));
-				}
-			}
-		}
-			
-		return T;
-	}
-	/**
-	 *  Determines which of this node's neighbors is white,
-	 *  meaning- not been visited, with tag=0
-	 * @param n the given node
-	 * @return a list of all this node neighbors
-	 */
-	public ArrayList<node_data> allWhiteNeighbors(node_data n) {
-		Collection<edge_data> edges = this.g.getE(n.getKey());
-		ArrayList<node_data>List= new ArrayList<node_data>();
-		if(edges!=null) {
-			for (edge_data ed : edges) {
-				//for each node in the edgesMap:
-				//if (ed.getTag()==0) {
-					//find all the neighbors with tag=0,
-					//meaning wasn't visited
-					List.add(this.g.getNode(ed.getDest()));
-				}
-			//}
-		}
-		return List;
-	}
-	public ArrayList<node_data> allNeighbors(node_data n) {
-		Collection<edge_data> edges = this.g.getE(n.getKey());
-		ArrayList<node_data>List= new ArrayList<node_data>();
-		if(edges!=null) {
-			for (edge_data ed : edges) {
-				//for each node in the edgesMap:
-				List.add(this.g.getNode(ed.getDest()));
-			//	System.out.println(ed.getDest());
-			}
-		}
-		return List;
-	}
-	
-	/**
-	 *Colors all this node's neighbors white, sets tag to 0
-	 * @param v the given node
-	 */
-/*	private void colorWhite(Collection<node_data> v) {
-		for (node_data node : v) {
-			//for each node in this nodesMap:
-			//color this node white
-			node.setTag(0);
-		}
-	}*/
 
 
 }
