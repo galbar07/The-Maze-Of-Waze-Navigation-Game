@@ -27,24 +27,24 @@ public class SimpleGameClient {
 		String g = game.getGraph();
 		System.out.println(g);
 		
-		DGraph gg = new DGraph();
-		gg.init(g);
-		robot.place_robots(game,gg);//place the robots
+//		DGraph gg = new DGraph();
+//		gg.init(g);
+//		robot.place_robots(game,gg);//place the robots
 		
 		
 		String info = game.toString();
 		MyGameGUI paint = new MyGameGUI(game);
+		paint.setVisible(true);
 		
-		
-		game.startGame();
+//		game.startGame();
 
 		// should be a Thread!!!
-		while(game.isRunning()) {
-
-			robot.moveRobots(game, gg);
-		}
-		String results = game.toString();
-		System.out.println("Game Over: "+results);
+//		while(game.isRunning()) {
+//
+//			robot.moveRobots(game, gg);
+//		}
+//		String results = game.toString();
+//		System.out.println("Game Over: "+results);
 	}
 
 	

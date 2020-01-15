@@ -169,7 +169,7 @@ public class Graph_Algo implements graph_algorithms,java.io.Serializable{
 	 * @return
 	 */
 	@Override
-	/*public List<node_data> shortestPath(int src, int dest) {
+	public List<node_data> shortestPath(int src, int dest) {
 		boolean stop = false;
 		if (this.graph_algo.getNode(src)==null || (this.graph_algo.getNode(dest)==null)) {
 			//if either of the src and dest nodes isn't in the graph	
@@ -244,8 +244,9 @@ public class Graph_Algo implements graph_algorithms,java.io.Serializable{
 
 			return null;
 		}
+		
 		return List;
-	}*/
+		}
 
 	/**
 	 * Computes a relatively short path which visit each node in the targets List.
