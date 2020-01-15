@@ -159,9 +159,11 @@ public class DGraph implements graph,java.io.Serializable{
 	 */
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		if(edgesMap.containsKey(node_id)) {
-		return edgesMap.get(node_id).values();}
-		return null;
+		if(!edgesMap.containsKey(node_id)) 
+			return null;
+		if(!nodesMap.containsKey(node_id))
+			return null;
+		return edgesMap.get(node_id).values();
 
 	}
 	/**

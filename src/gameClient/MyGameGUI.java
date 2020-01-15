@@ -141,7 +141,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 					Point3D T = new Point3D(((p1.x()+p2.x())/2),((p1.y()+p2.y())/2));
 					StdDraw.setPenRadius(0.5);
 					StdDraw.setPenColor(Color.BLACK);
-					 String no = String.format("%.1f", E.getWeight());
+					String no = String.format("%.1f", E.getWeight());
 					StdDraw.text(((T.x()+p1.x())/2),((T.y()+p1.y())/2), no);
 					StdDraw.setPenColor(Color.CYAN);
 					StdDraw.setPenRadius(0.020);

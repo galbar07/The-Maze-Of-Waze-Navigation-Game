@@ -10,10 +10,13 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+//import com.sun.accessibility.internal.resources.accessibility;
+
 import Server.game_service;
 import Server.robot;
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
+import dataStructure.NodeData;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
@@ -23,29 +26,27 @@ public class Robot_c {
 	private static game_service game_;
 	private static ArrayList<Fruit_c> all_fruits;
 	private static ArrayList<robot_inner>game_robots;
-	
-	
-	
+
+
+
 	public Robot_c(game_service game) {
 		Robot_c.game_=game;
 		Robot_c.all_fruits=get_fruits(game);
 		JSONObject line;
 		String info = game.toString();
 		try {
-			
+
 			line = new JSONObject(info);
 			JSONObject ttt = line.getJSONObject("GameServer");
 			int rs = ttt.getInt("robots");
 			Robot_c.game_robots = getRobots(game, rs);
-				
-			
+
+
 		}
-			catch (JSONException e) {e.printStackTrace();}
-	
-		
+		catch (JSONException e) {e.printStackTrace();}
 	}
-	
-	
+
+
 	public ArrayList<robot_inner>getRobots(game_service game,int robot_size){
 		ArrayList<robot_inner> rob = new ArrayList<robot_inner>();
 		for(int i=0;i<robot_size;i++) {
@@ -54,9 +55,9 @@ public class Robot_c {
 			rob.add(ri);
 		}
 		return rob;
-		
+
 	}
-	
+
 
 	/** 
 	 * Moves each of the robots along the edge, 
@@ -66,10 +67,10 @@ public class Robot_c {
 	 * @param log a list of all the moves
 	 */
 	public void moveRobots(game_service game, graph gg) {
-		List<String> log = game.move();
-		//System.out.println( game.move());
+		this.game_=game;
+		List<String> log = game_.move();
 		if(log!=null) {
-			long t = game.timeToEnd();
+			long t = game_.timeToEnd();
 			for(int i=0;i<log.size();i++) {
 				String robot_json = log.get(i);
 				try {
@@ -79,21 +80,16 @@ public class Robot_c {
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
 					
-					//  id = 0
-					//|  null   |
 					if(Robot_c.game_robots.get(rid).list_to_go_through==null  ||(dest ==-1 && Robot_c.game_robots.get(rid).list_to_go_through.size()==1)) {
 						Robot_c.game_robots.get(rid).list_to_go_through = nextNode(src,rid,Robot_c.game_robots.get(rid).list_to_go_through);
 					}
 					if(Robot_c.game_robots.get(rid).list_to_go_through!=null && Robot_c.game_robots.get(rid).list_to_go_through.size()>1) {
-					// 3->2
 						Robot_c.game_.chooseNextEdge(rid,Robot_c.game_robots.get(rid).list_to_go_through.get(1).getKey());
 						Robot_c.game_robots.get(rid).list_to_go_through.remove(1);
-						//System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						//System.out.println(ttt);
+						
 					}
 						Robot_c.all_fruits=get_fruits(game);//Fruit update
-//						if (Robot_c.game_robots.get(rid).list_to_go_through.contains(gg.getNode(src))&&Robot_c.game_robots.get(rid).list_to_go_through.size()==1)
-//							dest=-1;
+
 					
 				} 
 				catch (JSONException e) {e.printStackTrace();}
@@ -102,7 +98,6 @@ public class Robot_c {
 	}
 	
 	private static ArrayList<Fruit_c> get_fruits(game_service game){
-		//String g = game.getGraph();	
 		Fruit_c temp = new Fruit_c();
 		ArrayList<Fruit_c>fruits = new ArrayList<>();
 		//this array list will hold all the fruits
@@ -124,7 +119,6 @@ public class Robot_c {
 				edge_data E = temp.assos(p_fruit,game,type);
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
-			//	shortestPath(E.getSrc(),E.getDest());
 
 			}
 			
@@ -148,49 +142,24 @@ public class Robot_c {
 	 */
 	private static List <node_data> nextNode(int src, int id,List<node_data>list_to_go_through) {
 		
-		if (id<0)
-			//if there is no path to any of the fruits
-			throw new RuntimeException("There is no path to any fruit");
 		DGraph gg = new DGraph();
 		gg.init(Robot_c.game_.getGraph());
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
 		
-		
-		
-		
-		int type=Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getType();
-		//System.out.println(type);
-		if (type==-1) {
-			//if it's a banana- find the shortestPath from your current position to its src node
+
 			
 			list_to_go_through=gr.shortestPath(src ,Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getSrc()); 
 			//and from it to its dest node
 			if(list_to_go_through==null) { return null;
-			//	int new_id=Robot_c.game_robots.size()-1;
-				//return nextNode(src, new_id, list_to_go_through);
+			
 			}
 			list_to_go_through.add(gg.getNode(Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest()));
 			
 					//gr.shortestPath(list_to_go_through.get(0).getKey(), Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest());
-		}
-		else {
-			//if it's an apple- find the shortestPath from your current position to its dest node
+			
 		
-			
-			list_to_go_through=gr.shortestPath(src ,Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest()); 
-			//and from it to its src node
-			if(list_to_go_through.size()<=0) { return null;
-//				int new_id=Robot_c.game_robots.size()-1;
-//				return nextNode(src, new_id, list_to_go_through);
-				}
-			list_to_go_through.add(gg.getNode(Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getSrc()));
-			
-		}
 
-		for(int i=0;i<list_to_go_through.size();i++) {
-			System.out.print("targets are \t " + list_to_go_through.get(i).getKey());
-		}
 		return list_to_go_through;
 	}
 
@@ -261,21 +230,22 @@ public class Robot_c {
 
 
 	}
-	
+
+	//constructor for inner help
+		class robot_inner{
+		  List<node_data> list_to_go_through;
+			
+			public robot_inner(List<node_data> list_to_go_through) {
+				this.list_to_go_through = list_to_go_through;
+				
+			}
+			public int getSize() {
+				return this.list_to_go_through.size();
+			}
+
+
+		}
+
 
 
 }
-//constructor for inner help
-	class robot_inner{
-	  List<node_data> list_to_go_through;
-		
-		public robot_inner(List<node_data> list_to_go_through) {
-			this.list_to_go_through = list_to_go_through;
-			
-		}
-		public int getSize() {
-			return this.list_to_go_through.size();
-		}
-
-
-	}

@@ -15,12 +15,11 @@ import dataStructure.graph;
 public class SimpleGameClient {
 	
 	public static void main(String[] a) throws JSONException {
-		System.out.println("hi");
 		test1();
 	}
 	
 	public static void test1() throws JSONException {
-		int scenario_num = 3;
+		int scenario_num = 23;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		Fruit_c fruit = new Fruit_c();
 		Robot_c robot = new Robot_c(game);
@@ -32,12 +31,12 @@ public class SimpleGameClient {
 		robot.place_robots(game,gg);//place the robots
 		
 		
-		String info = game.toString();
+		//String info = game.toString();
 		MyGameGUI paint = new MyGameGUI(game);
-		
-		
-		game.startGame();
+	game.startGame();
 
+	Collection<edge_data>n=gg.getE(38);
+	
 		// should be a Thread!!!
 		while(game.isRunning()) {
 
