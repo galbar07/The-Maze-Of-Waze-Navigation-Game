@@ -26,11 +26,14 @@ public class Robot_c {
 	public  game_service game_;
 	private static ArrayList<Fruit_c> all_fruits;
 	private static ArrayList<robot_inner>game_robots;
+	static int count=0;
 
 
 
 	public Robot_c(game_service game) {
 		game_=game;
+		List<String> log = game_.move();
+		count++;
 		Robot_c.all_fruits=get_fruits(game);
 		JSONObject line;
 		String info = game.toString();
@@ -39,15 +42,16 @@ public class Robot_c {
 			line = new JSONObject(info);
 			JSONObject ttt = line.getJSONObject("GameServer");
 			int rs = ttt.getInt("robots");
-			Robot_c.game_robots = getRobots(game, rs);
+			Robot_c.game_robots = getRobots(rs+count++);
 
 
 		}
 		catch (JSONException e) {e.printStackTrace();}
-	}
+		}
+	
 
 
-	public ArrayList<robot_inner>getRobots(game_service game,int robot_size){
+	public ArrayList<robot_inner>getRobots(int robot_size){
 		ArrayList<robot_inner> rob = new ArrayList<robot_inner>();
 		for(int i=0;i<robot_size;i++) {
 			List<node_data> n1 = null;
@@ -57,7 +61,6 @@ public class Robot_c {
 		return rob;
 
 	}
-
 
 	/** 
 	 * Moves each of the robots along the edge, 
@@ -85,7 +88,6 @@ public class Robot_c {
 					if(Robot_c.game_robots.get(rid).list_to_go_through!=null && Robot_c.game_robots.get(rid).list_to_go_through.size()>1) {
 						game.chooseNextEdge(rid,Robot_c.game_robots.get(rid).list_to_go_through.get(1).getKey());
 						Robot_c.game_robots.get(rid).list_to_go_through.remove(1);
-						
 					}
 						Robot_c.all_fruits=get_fruits(game);//Fruit update
 
@@ -118,7 +120,6 @@ public class Robot_c {
 				edge_data E = temp.assos(p_fruit,game,type);
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
-
 			}
 			
 			Collections.sort(fruits,Comparator.comparing(Fruit_c::getValue));
@@ -129,9 +130,6 @@ public class Robot_c {
 
 		return fruits;
 	}
-
-
-
 
 	/**
 	 * a very simple random walk implementation!
@@ -147,15 +145,21 @@ public class Robot_c {
 		gr.init(gg);
 		
 
-			
 			list_to_go_through=gr.shortestPath(src ,Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getSrc()); 
 			//and from it to its dest node
-			if(list_to_go_through==null) { return null;
-			
-			}
+			if(list_to_go_through==null) { return null;}
 			list_to_go_through.add(gg.getNode(Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest()));
+					
+//			else {
+//				List <Integer>for_tsp = new ArrayList<Integer>() ;
+//				for(int i=0;i<Robot_c.all_fruits.size();i++) {
+//					for_tsp.add(Robot_c.all_fruits.get(i).getSrc());
+//					for_tsp.add(Robot_c.all_fruits.get(i).getDest());
+//				}
+//				list_to_go_through = gr.TSP(for_tsp);
 			
-					//gr.shortestPath(list_to_go_through.get(0).getKey(), Robot_c.all_fruits.get(id%Robot_c.all_fruits.size()).getDest());
+			
+			//1-2-1 
 			
 		
 
@@ -169,15 +173,12 @@ public class Robot_c {
 	 * @param game the given game from the server
 	 * @param gg the graph made out of the game
 	 */
-
-
-	public void place_robots(game_service game, graph gg) {
-		//String g = game.getGraph();	
+	public void place_robots() {
 		Fruit_c temp = new Fruit_c();
 		ArrayList<Fruit_c> fruits = new ArrayList<Fruit_c>();
 		//this array list will hold all the fruits
 		JSONObject line;
-		String info = game.toString();
+		String info = this.game_.toString();
 		int num_robots=0;
 
 		try {
@@ -186,7 +187,7 @@ public class Robot_c {
 			num_robots = ttt.getInt("robots");
 
 
-			Iterator<String> f_iter = game.getFruits().iterator();
+			Iterator<String> f_iter = this.game_.getFruits().iterator();
 			//goes through all the fruits
 			while(f_iter.hasNext()) {
 				JSONObject line2 = new JSONObject(f_iter.next());
@@ -195,7 +196,7 @@ public class Robot_c {
 				double value=ttt.getDouble("value");
 				String p[] = ttt.getString("pos").split(",");
 				Point3D p_fruit = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
-				edge_data E = temp.assos(p_fruit,game,type);
+				edge_data E = temp.assos(p_fruit,game_,type);
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
 
@@ -216,7 +217,7 @@ public class Robot_c {
 				}
 
 			}
-			game.addRobot(fruits.get(rm).getSrc());
+			game_.addRobot(fruits.get(rm).getSrc());
 			//add the robot in the index you found
 
 			max_value = Double.MIN_VALUE;
@@ -224,10 +225,7 @@ public class Robot_c {
 			//remove that fruit from the list so the second robot will be placed
 			//in the second max value and so on
 			rm=0;
-
 		}
-
-
 	}
 
 	//constructor for inner help
@@ -244,7 +242,5 @@ public class Robot_c {
 
 
 		}
-
-
 
 }

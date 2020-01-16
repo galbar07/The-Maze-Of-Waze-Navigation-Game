@@ -1,4 +1,5 @@
 package gameClient;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -14,39 +15,15 @@ import dataStructure.graph;
 
 public class SimpleGameClient {
 	
-	public static void main(String[] a) throws JSONException {
+	public static void main(String[] a) throws JSONException, IOException {
 		test1();
 	}
 	
-	public static void test1() throws JSONException {
-//		int scenario_num = 23;
-//		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
-//		Fruit_c fruit = new Fruit_c();
-//		Robot_c robot = new Robot_c(game);
-//		String g = game.getGraph();
-//		System.out.println(g);
-		
-//		DGraph gg = new DGraph();
-//		gg.init(g);
-//		robot.place_robots(game,gg);//place the robots
-		
-		
-		//String info = game.toString()
+	public static void test1() throws JSONException, IOException {
+
 		MyGameGUI paint = new MyGameGUI();
 
 		paint.setVisible(true);
-		
-//		game.startGame();
-
-
-	
-		// should be a Thread!!!
-//		while(game.isRunning()) {
-//
-//			robot.moveRobots(game, gg);
-//		}
-//		String results = game.toString();
-//		System.out.println("Game Over: "+results);
 	}
 
 	

@@ -58,11 +58,10 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	Timer time;
 	
 	
-	public MyGameGUI() throws JSONException {
+	public MyGameGUI() throws JSONException, IOException {
 		initGUI();
-
 	}
-	private void set_scale(int mode) throws JSONException {
+	private void set_scale(int mode) throws JSONException, IOException {
 		
 		StdDraw.setCanvasSize(800,800);
 
@@ -86,23 +85,18 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	}
 	
 
-	private void initGUI() throws JSONException  
+	private void initGUI() throws JSONException, IOException  
 	{	
 		this.setSize(600, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Play");
 		menuBar.add(menu);
-
 		this.setMenuBar(menuBar);
-
 		MenuItem item1 = new MenuItem("Automatic");
 		item1.addActionListener(this);
 		MenuItem item2 = new MenuItem("Manual");
 		item2.addActionListener(this);
-	
-
 		MenuItem item4 = new MenuItem("Is connected");
 		item4.addActionListener(this);
 		MenuItem item5 = new MenuItem("find Shortest path");
@@ -111,17 +105,14 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		item6.addActionListener(this);
 		MenuItem item7= new MenuItem("TSP");
 		item7.addActionListener(this);
-
 		menu.add(item1);
 		menu.add(item2);
-		
-		
 		this.addMouseListener(this);
-
 	}	
 	public void paint(int mode) throws JSONException//add text in case two edges go the same direction
 	{
 
+		StdDraw.enableDoubleBuffering();
 		Font font = new Font("Arial", Font.BOLD, 15);
 		StdDraw.setPenRadius(0.02);
 		Collection<node_data> Paint_node = gg.getV();
@@ -160,9 +151,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 					}
 					StdDraw.point(p4.x(),p4.y());					
 
-				}
-				
-				
+				}				
 			}
 		
 		}
@@ -199,7 +188,6 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		int count=0;
 		while(f_iter.hasNext()) {
 			
-
 			line2 = new JSONObject(f_iter.next().replaceAll("\\s+",""));
 			JSONObject ttt = line2.getJSONObject("Fruit");
 			double rid = ttt.getDouble("value");
@@ -214,8 +202,6 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			}
 			count++;
 		}
-		
-		System.out.println(count);
 	}
 
 
@@ -280,7 +266,12 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		case "Manual":
 			try {
 				try {
-					paintManual();
+					try {
+						paintManual();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -313,10 +304,9 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		catch (JSONException e) {e.printStackTrace();}
 	}
 	
-	//only neigbours 
+	//only neigbours need to improve
 	private void manulmode() {
 		List<String> log = this.game.move();
-		//System.out.println( game.move());
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -327,7 +317,6 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 					int id = ttt.getInt("id");
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
-					
 					if(dest == -1) {
 						String inputString = JOptionPane.showInputDialog(null, "Enter next node for robot" + id);
 				        dest = Integer.parseInt(inputString);
@@ -337,11 +326,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			
 				catch (JSONException e) {e.printStackTrace();}
 			}
-		
 	}
 }
-	//Manual mode
-	private void paintManual() throws JSONException, IOException {
+	
+	//Manual mode 
+	private void paintManual() throws JSONException, IOException, InterruptedException {
         String inputString = JOptionPane.showInputDialog(null, "INPUT LEVEL");
         int input = Integer.parseInt(inputString);
     	game_service game = Game_Server.getServer(input);
@@ -359,8 +348,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		while(game.isRunning()) {
 			manulmode();
 		}
-		gameover();
-		
+		gameover(0);
 	}
 
 	private void paintAuto() throws JSONException, IOException, InterruptedException {
@@ -373,7 +361,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			this.game = game;
 			this.gg = gg;
 			Robot_c rob = new Robot_c(this.game);
-			rob.place_robots(game, gg);
+			rob.place_robots();
 			set_scale(1);
 			game.startGame();
 			t = new Thread(this);
@@ -385,7 +373,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			    	  rob.moveRobots(game, gg);
 			    	  if(!game.isRunning()) {
 			    		 try {
-							gameover();
+							try {
+								gameover(1);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 						} catch (IOException e) {
 							e.printStackTrace();
 						} 
@@ -394,22 +386,18 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			  };
 			time =new Timer(delay, taskPerformer);
 			time.start();
-			 
-			  
-		
-		
 	}
 	
-	
-
-	private void gameover() throws IOException {
-		
+	private void gameover(int mode) throws IOException, InterruptedException {
+		if(mode == 1) {
 		time.stop();
+		}
+		t.join();
 		BufferedImage image = ImageIO.read(new File("gameover.png"));
 		this.getGraphics().drawImage(image, 90, 100, 400,400, null);
-		this.getGraphics().drawString("Results is " + this.game.toString(), 90, 80);
+		JFrame Show = new JFrame();
 		StdDraw.setCanvasSize(1,1);
-
+		JOptionPane.showMessageDialog(Show,"Game Over you scored :" + this.game.toString() );	
 	}
 	
 	@Override
@@ -420,18 +408,14 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 				paint_random();
 				
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			}
-			
 		}
 
 	private void paint_random() throws JSONException {
 		
-		StdDraw.enableDoubleBuffering();
-
 		Font font = new Font("Arial", Font.BOLD, 15);
 		StdDraw.setPenRadius(0.02);
 		Collection<node_data> Paint_node = gg.getV();
@@ -466,21 +450,18 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 					StdDraw.setPenRadius(0.020);
 					Point3D p4 = new Point3D((p1.x()+p2.x())/2,(p1.y()+p2.y())/2);
 
-
 					for(int i=0;i<2;i++) {
 						Point3D p5 = new Point3D((p4.x()+p1.x())/2,(p4.y()+p1.y())/2);
 						p4 = new Point3D(p5);
 					}
 					StdDraw.point(p4.x(),p4.y());
-					
 				}
 			}
 		
 		}
-		
 		paint_fruit();
 		paint_robots();
-		StdDraw.pause(250);
+		StdDraw.pause(150);
 		
 		StdDraw.show();
 		StdDraw.clear();
