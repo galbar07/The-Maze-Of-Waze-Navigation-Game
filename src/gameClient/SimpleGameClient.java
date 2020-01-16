@@ -19,12 +19,12 @@ public class SimpleGameClient {
 	}
 	
 	public static void test1() throws JSONException {
-		int scenario_num = 23;
-		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
-		Fruit_c fruit = new Fruit_c();
-		Robot_c robot = new Robot_c(game);
-		String g = game.getGraph();
-		System.out.println(g);
+//		int scenario_num = 23;
+//		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
+//		Fruit_c fruit = new Fruit_c();
+//		Robot_c robot = new Robot_c(game);
+//		String g = game.getGraph();
+//		System.out.println(g);
 		
 //		DGraph gg = new DGraph();
 //		gg.init(g);
@@ -32,9 +32,7 @@ public class SimpleGameClient {
 		
 		
 		//String info = game.toString()
-		MyGameGUI paint = new MyGameGUI(game);
-
-	game.startGame();
+		MyGameGUI paint = new MyGameGUI();
 
 		paint.setVisible(true);
 		

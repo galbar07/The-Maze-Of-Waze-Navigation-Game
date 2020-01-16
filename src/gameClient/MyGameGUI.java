@@ -28,6 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileSystemView;
 
 import org.json.JSONException;
@@ -54,12 +55,12 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	double min_x;
 	double max_y;
 	double min_y;
+	Timer time;
 	
 	
-	public MyGameGUI(game_service game) throws JSONException {
+	public MyGameGUI() throws JSONException {
 		initGUI();
-		this.game = game;
-		gg = new DGraph();
+
 	}
 	private void set_scale(int mode) throws JSONException {
 		
@@ -260,7 +261,12 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		case "Automatic":
 			try {
 				try {
-					paintAuto();
+					try {
+						paintAuto();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -357,7 +363,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		
 	}
 
-	private void paintAuto() throws JSONException, IOException {
+	private void paintAuto() throws JSONException, IOException, InterruptedException {
 		    String inputString = JOptionPane.showInputDialog(null, "INPUT LEVEL");
 	        int input = Integer.parseInt(inputString);
 	    	game_service game = Game_Server.getServer(input);
@@ -369,22 +375,36 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			Robot_c rob = new Robot_c(this.game);
 			rob.place_robots(game, gg);
 			set_scale(1);
-			t = new Thread(this);
-			t.start();
 			game.startGame();
+			t = new Thread(this);
+			t.start();			 
+			int delay = 30; //milliseconds
 			
-			while(game.isRunning()) {
-				rob.moveRobots(this.game, gg);
-			}
-//			gameover();
-
+			ActionListener taskPerformer = new ActionListener() {
+			      public void actionPerformed(ActionEvent evt) {
+			    	  rob.moveRobots(game, gg);
+			    	  if(!game.isRunning()) {
+			    		 try {
+							gameover();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} 
+			    	  }
+			      }
+			  };
+			time =new Timer(delay, taskPerformer);
+			time.start();
+			 
+			  
 		
 		
 	}
 	
 	
+
 	private void gameover() throws IOException {
 		
+		time.stop();
 		BufferedImage image = ImageIO.read(new File("gameover.png"));
 		this.getGraphics().drawImage(image, 90, 100, 400,400, null);
 		this.getGraphics().drawString("Results is " + this.game.toString(), 90, 80);
@@ -396,7 +416,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	public void run() {
 	
 		while(this.game.isRunning()) {
-			try {
+			try{
 				paint_random();
 				
 			} catch (JSONException e) {
@@ -410,8 +430,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 
 	private void paint_random() throws JSONException {
 		
-		
 		StdDraw.enableDoubleBuffering();
+
 		Font font = new Font("Arial", Font.BOLD, 15);
 		StdDraw.setPenRadius(0.02);
 		Collection<node_data> Paint_node = gg.getV();

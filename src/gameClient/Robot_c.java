@@ -23,14 +23,14 @@ import dataStructure.node_data;
 import utils.Point3D;
 
 public class Robot_c {
-	private static game_service game_;
+	public  game_service game_;
 	private static ArrayList<Fruit_c> all_fruits;
 	private static ArrayList<robot_inner>game_robots;
 
 
 
 	public Robot_c(game_service game) {
-		Robot_c.game_=game;
+		game_=game;
 		Robot_c.all_fruits=get_fruits(game);
 		JSONObject line;
 		String info = game.toString();
@@ -67,7 +67,6 @@ public class Robot_c {
 	 * @param log a list of all the moves
 	 */
 	public void moveRobots(game_service game, graph gg) {
-		this.game_=game;
 		List<String> log = game_.move();
 		if(log!=null) {
 			long t = game_.timeToEnd();
@@ -81,10 +80,10 @@ public class Robot_c {
 					int dest = ttt.getInt("dest");
 					
 					if(Robot_c.game_robots.get(rid).list_to_go_through==null  ||(dest ==-1 && Robot_c.game_robots.get(rid).list_to_go_through.size()==1)) {
-						Robot_c.game_robots.get(rid).list_to_go_through = nextNode(src,rid,Robot_c.game_robots.get(rid).list_to_go_through);
+						Robot_c.game_robots.get(rid).list_to_go_through = nextNode(game,src,rid,Robot_c.game_robots.get(rid).list_to_go_through);
 					}
 					if(Robot_c.game_robots.get(rid).list_to_go_through!=null && Robot_c.game_robots.get(rid).list_to_go_through.size()>1) {
-						Robot_c.game_.chooseNextEdge(rid,Robot_c.game_robots.get(rid).list_to_go_through.get(1).getKey());
+						game.chooseNextEdge(rid,Robot_c.game_robots.get(rid).list_to_go_through.get(1).getKey());
 						Robot_c.game_robots.get(rid).list_to_go_through.remove(1);
 						
 					}
@@ -140,10 +139,10 @@ public class Robot_c {
 	 * @param src
 	 * @return
 	 */
-	private static List <node_data> nextNode(int src, int id,List<node_data>list_to_go_through) {
+	private static List <node_data> nextNode(game_service game,int src, int id,List<node_data>list_to_go_through) {
 		
 		DGraph gg = new DGraph();
-		gg.init(Robot_c.game_.getGraph());
+		gg.init(game.getGraph());
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
 		
