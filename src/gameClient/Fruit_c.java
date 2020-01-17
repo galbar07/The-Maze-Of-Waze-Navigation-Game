@@ -8,7 +8,7 @@ import utils.Point3D;
 
 import java.util.Comparator;
 
-public class Fruit_c {
+public class Fruit_c implements Fruit{
 	private int type;
 	private double value;
 	private int src;
@@ -70,16 +70,13 @@ public class Fruit_c {
 		return this.type;
 	}
 	
-public int getTag() {
-		
+	public int getTag() {	
 		return this.tag;
 	}
 	
 	public void setTag(int tag) {
 		this.tag=tag;
 	}
-	
-
 	/**
 	 * Associate a fruit with its right edge
 	 * @param p_fruit
@@ -91,9 +88,8 @@ public int getTag() {
 		String g = game.getGraph();
 		DGraph gg = new DGraph();
 		gg.init(g);
-		
 		Collection<node_data> node_list = gg.getV();
-		
+
 		for (node_data n : node_list) {
 			//for every node in the graph
 			
@@ -112,13 +108,9 @@ public int getTag() {
 						//if it's a banana
 						return new EdgeData(e.getDest(), e.getSrc(),0);
 					else //if it's an apple
-						return e;
-					
+						return e;	
 				}
-				
 			}
-			
-			
 		}
 		return null;
 	}
