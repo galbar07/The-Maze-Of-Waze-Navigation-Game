@@ -73,6 +73,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 
@@ -788,6 +789,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 			ymax = max + BORDER * size;
 		}
 	}
+	
 
 	/**
 	 * Sets both the <em>x</em>-scale and <em>y</em>-scale to the (same) specified range.

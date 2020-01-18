@@ -32,6 +32,7 @@ import utils.StdDraw;
 public class MyGameGUI extends JFrame implements ActionListener, MouseListener,Runnable {
 
 	private static final long serialVersionUID = 1L;
+	private KML_Logger _kml;
 	DGraph gg ;
 	game_service game;
 	static int i=0;
@@ -43,6 +44,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	double min_y;
 	Timer time;
 
+
 	public MyGameGUI() throws JSONException, IOException {
 		JFrame Show = new JFrame();
 		JOptionPane.showMessageDialog(Show,"Loading ..." );	
@@ -50,7 +52,16 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		this.setVisible(true);
 		BufferedImage image = ImageIO.read(new File("images/waze_maze.png"));
 		this.getGraphics().drawImage(image, 90, 100, 400,400, null);
+
+		
 		}
+	public KML_Logger getKml() {
+		return _kml;
+	}
+	private void setKml(KML_Logger _kml) {
+		this._kml = _kml;
+	}
+
 	private void set_scale(int mode) throws JSONException, IOException {
 		
 		StdDraw.setCanvasSize(800,800);
@@ -129,9 +140,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
         int input = Integer.parseInt(inputString);
         if(input>23 ||input<0)throw new RuntimeException("No such level exsist");
     	game_service game = Game_Server.getServer(input);
+
     	String g = game.getGraph();
     	DGraph gg = new DGraph();
 		gg.init(g);
+		setKml(new KML_Logger(input, gg));
 		this.game = game;
 		this.gg = gg;
 		set_scale(0);
@@ -179,6 +192,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			gg.init(g);
 			this.game = game;
 			this.gg = gg;
+			setKml(new KML_Logger(input, gg));
 			robot_algo robot = new robot_algo(this.game);
 			game_manager manage = new game_manager(robot);
 			manage.locate_robots_auto();
@@ -186,7 +200,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			game.startGame();
 			t = new Thread(this);
 			t.start();			 
-			int delay = 30; //milliseconds
+			int delay = 1; //milliseconds
 			
 			ActionListener taskPerformer = new ActionListener() {
 			      public void actionPerformed(ActionEvent evt) {
@@ -200,6 +214,10 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			    		 try {
 						 try {
 							gameover();
+							if(dialogKML() == 0) {
+								getKml().KMLtoFile();
+							}
+							
 							} catch (InterruptedException e) {e.printStackTrace();}
 						    } catch (IOException e) {e.printStackTrace();}
 			    	  }
@@ -209,6 +227,25 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			time.start();
 	}
 	
+	public int dialogKML(){
+		try {
+	        Object[] options = {"Yes", "No"};
+	        int x = JOptionPane.showOptionDialog(null, "Do you want to save this game as kml file?\n"
+	        		+ "The file will located in your Project under data folder.\n"
+	        		+ "No is default option",
+	                "",
+	                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+	     
+			  if(x == -1)
+				  return 1;
+			  
+			  return x;
+	      
+		}catch(Exception err) {
+			return 1;
+		}
+	}
 	//Activate this function when the game is over
 	private void gameover() throws IOException, InterruptedException {
 		time.stop();
@@ -217,7 +254,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		this.getGraphics().drawImage(image, 90, 100, 400,400, null);
 		JFrame Show = new JFrame();
 		StdDraw.setCanvasSize(1,1);
-		JOptionPane.showMessageDialog(Show,"Game Over you scored :" + this.game.toString() );	
+		JOptionPane.showMessageDialog(Show,"Game Over you scored :" + this.game.toString() );
+		
 	}
 	
 	//Thread that keep paint the graph while the game is running
@@ -226,13 +264,16 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		while(this.game.isRunning()) {
 			try{
 				paint_random();
+			
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			
 			}
-		}
+		
+	}
+		
 
 	private void initGUI() throws JSONException, IOException  
 	{	
@@ -250,6 +291,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		menu.add(item2);
 		this.addMouseListener(this);
 	}	
+	
+	
 	public void paint(int mode) throws JSONException//add text in case two edges go the same direction
 	{
 
@@ -301,6 +344,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		paint_robots();
 		}
 			StdDraw.show();
+			
 	}
 	
 	private void paint_robots() throws JSONException {
@@ -317,6 +361,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			String[] posOfRobots = ttt.getString("pos").split(",");
 			Point3D p_robot = new Point3D(Double.parseDouble(posOfRobots[0]),Double.parseDouble(posOfRobots[1])); 
 			StdDraw.picture(p_robot.x(),p_robot.y(),"images/robot.png",0.0007,0.0007);//change 
+			this.getKml().Placemark(2, p_robot.x(),p_robot.y(), this.getKml().currentTime());
 			count++;
 	    }
 		
@@ -334,10 +379,12 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			String p[] = ttt.getString("pos").split(",");
 			Point3D p_fruit = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1])); 
 			if(type==1) {
-			StdDraw.picture(p_fruit.x(),p_fruit.y(),"images/apple.png",0.0007,0.0007);//change 
+			StdDraw.picture(p_fruit.x(),p_fruit.y(),"images/apple.png",0.0007,0.0007);//change
+			this.getKml().Placemark(0, p_fruit.x(), p_fruit.y(), this.getKml().currentTime());
 			}
 			else{
 				StdDraw.picture(p_fruit.x(),p_fruit.y(),"images/banana.png",0.0007,0.0007);
+				this.getKml().Placemark(1, p_fruit.x(), p_fruit.y(), this.getKml().currentTime());
 			}
 		}
 	}
@@ -406,6 +453,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		StdDraw.show();
 		StdDraw.clear();
 		
+		
+		
 	}
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -431,5 +480,6 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	public void mouseReleased(MouseEvent arg0) {
 
 	}
+	
 	}
 

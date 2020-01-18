@@ -7,6 +7,7 @@ import dataStructure.*;
 import utils.Point3D;
 
 import java.util.Comparator;
+import java.util.Iterator;
 
 public class Fruit_c implements Fruit{
 	private int type;
@@ -122,6 +123,10 @@ public class Fruit_c implements Fruit{
 			return -1;
 		else
 			return 0;
+	}
+	public Iterator<Fruit_c> iterator() {
+		// TODO Auto-generated method stub
+		return this.iterator();
 	}
 
 }

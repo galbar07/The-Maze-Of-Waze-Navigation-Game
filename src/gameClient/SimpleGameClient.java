@@ -22,6 +22,7 @@ public class SimpleGameClient {
 	public static void test1() throws JSONException, IOException {
 
 		MyGameGUI paint = new MyGameGUI();
+		
 	}
 
 	

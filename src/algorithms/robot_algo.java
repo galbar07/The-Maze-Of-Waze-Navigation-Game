@@ -92,12 +92,33 @@ public class robot_algo {
 		gg.init(this.game_.getGraph().toString());
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
-			
-		list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
+		long t = this.get_game().timeToEnd();
+		
+		
+
+		if(t%5!=0) {
+			list_to_go_through=gr.shortestPath(src, this.bestNode(src));
+
+		//list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
 			//and from it to its dest node
-			if(list_to_go_through==null) { return null;}
+			//if(list_to_go_through==null) { return null;}
+			//	list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
+
+		}
+		else {
+			list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
 			list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
-			list_to_go_through = gr.shortestPath(src, this.bestNode(src));		
+
+		}
+		//if (gr.shortestPathDist(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc())>t)
+			//list_to_go_through=gr.shortestPath(src, this.bestNode(src));
+		//	list_to_go_through=gr.shortestPath(src, this.bestNode(src));
+			//	list_to_go_through=gr.shortestPath(src, this.bestNode(src));
+			//if (list_to_go_through.size()==1) {
+				//list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
+				//list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
+
+			
 
 		return list_to_go_through;
 	}
@@ -130,6 +151,7 @@ public class robot_algo {
 		{
 			if(src==this.all_fruits.get(0).getSrc()) 
 			{
+			
 				dest=this.all_fruits.get(0).getDest();
 			}
 			else

@@ -13,9 +13,15 @@ import utils.Point3D;
 public class game_manager {
 
 	private robot_algo robot;
+	private double fruitX;
+	private double fruitY;
+	private double robotX;
+	private double robotY;
+	
 	
 	public game_manager(robot_algo robot) {
 		this.robot = robot;
+		
 	}
 	
 	//locate the robots in manual mode by the user decision
@@ -38,7 +44,6 @@ public class game_manager {
 		public void move_robots_manual() throws JSONException {
 			List<String> log = this.robot.get_game().move();
 			if(log!=null) {
-				long t = this.robot.get_game().timeToEnd();
 				for(int i=0;i<log.size();i++) {
 					String robot_json = log.get(i);
 					JSONObject line = new JSONObject(robot_json);
@@ -46,6 +51,7 @@ public class game_manager {
 					int rid = ttt.getInt("id");
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
+					
 						
 					if(this.robot.get_inner_robots().get(rid).getNodeList() == null || (dest == -1 && this.robot.get_inner_robots().get(rid).getSize()==1)) {
 						String inputString = JOptionPane.showInputDialog(null, "Enter next node for robot" + rid);
@@ -56,11 +62,20 @@ public class game_manager {
 						this.robot.get_game().chooseNextEdge(rid, this.robot.get_inner_robots().get(rid).getNodeList().get(1).getKey());
 						this.robot.get_inner_robots().get(rid).list_to_go_through.remove(1);	
 					}
+				/*	if(this.robot.get_inner_fruit().get(i).getType() == -1) {
+						getGUI.getKml().Placemark(5, f.getPosX(), f.getPosY(), getGUI().getKml().currentTime());
+					}
+					else {
+						getGUI().getKml().Placemark(6, f.getPosX(), f.getPosY(), getGUI().getKml().currentTime());
+					}*/
+					
 							
 				}
 				
 			}
 		}
+		
+
 		/** 
 		 * Moves each of the robots along the edge, 
 		 * in case the robot is on a node the next destination (next edge) is chosen.
@@ -71,6 +86,20 @@ public class game_manager {
 		//Moves the robots in auto mode 
 			public void move_robots_Auto() throws JSONException {
 				List<String> log = this.robot.get_game().move();
+
+				List<String> fruits = this.robot.get_game().getFruits();
+				for (int i = 0; i < fruits.size(); i++) {
+				//Fruit_c f=this.robot.get_inner_fruit().get(i);
+					Fruit_c f=new Fruit_c();
+					f=this.robot.get_inner_fruit().get(i);
+					// kml fruit placemark 
+					if(f.getType() == -1) {
+//						this.robot..getKml().Placemark(5, getPosXFruit(), getPosYFruit(), getGUI().getKml().currentTime());
+					}
+					else {
+//						getGUI().getKml().Placemark(6, getPosXFruit(), getPosYFruit(), getGUI().getKml().currentTime());
+					}
+				}
 				if(log!=null) {
 					long t = this.robot.get_game().timeToEnd();
 					for(int i=0;i<log.size();i++) {
@@ -80,17 +109,22 @@ public class game_manager {
 						int rid = ttt.getInt("id");
 						int src = ttt.getInt("src");
 						int dest = ttt.getInt("dest");
-							
+						String p[] = ttt.getString("pos").split(",");
+						this.robotX=Double.parseDouble(p[0]);
+						this.robotY=Double.parseDouble(p[1]);
+						Point3D p_robot = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
+//						getKml().Placemark(rid, getPosXRobot(), getPosYRobot(), getGUI().getKml().currentTime());
+
 						if(this.robot.get_inner_robots().get(rid).getNodeList() == null || (dest == -1 && this.robot.get_inner_robots().get(rid).getSize()==1)) {
 							this.robot.get_inner_robots().get(rid).SetNodeList(this.robot.nextNode(src, rid,this.robot.get_inner_robots().get(rid).getNodeList()));
 						}
-						if( dest==-1&& this.robot.get_inner_robots().get(rid).getNodeList()!=null && this.robot.get_inner_robots().get(rid).getNodeList().size()>1) {
+						if( this.robot.get_inner_robots().get(rid).getNodeList()!=null && this.robot.get_inner_robots().get(rid).getNodeList().size()>1) {
 							this.robot.get_game().chooseNextEdge(rid, this.robot.get_inner_robots().get(rid).getNodeList().get(1).getKey());
 							this.robot.get_inner_robots().get(rid).list_to_go_through.remove(1);
 						}
 						this.robot.all_fruits = this.robot.update_inner_fruit();//gal change it tommrow
-					}
 				}
+			}
 			}
 			
 			/**
@@ -119,6 +153,8 @@ public class game_manager {
 					int type=ttt.getInt("type");
 					double value=ttt.getDouble("value");
 					String p[] = ttt.getString("pos").split(",");
+					this.fruitX=Double.parseDouble(p[0]);
+					this.fruitY=Double.parseDouble(p[1]);
 					Point3D p_fruit = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
 					edge_data E = temp.assos(p_fruit,this.robot.get_game(),type);
 					//each fruit will be associated to its edge
@@ -144,6 +180,21 @@ public class game_manager {
 					fruits.remove(rm);//remove that fruit from the list so the second robot will be placed
 					rm=0;            //in the second max value and so on
 				}
+			}			
+			
+
+			
+			private double getPosXFruit() {
+				return this.fruitX;
+			}
+			private double getPosYFruit() {
+				return this.fruitY;
+			}
+			private double getPosXRobot() {
+				return this.robotX;
+			}
+			private double getPosYRobot() {
+				return this.robotY;
 			}
 
 }
