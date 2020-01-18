@@ -10,7 +10,6 @@
 
 [![](https://imgur.com/PYbAdDu.png)](http://www.youtube.com/watch?v=cTmzMv8FwFY "Project")
 
-
 #             Info
 ```
 The-Maze-Of-Waze-Navigation-Game main goal is to collect as much fruits you can "eat", you can do it by two ways:
@@ -18,22 +17,22 @@ The-Maze-Of-Waze-Navigation-Game main goal is to collect as much fruits you can 
 - Auto mode
 ```
 
-###      Manual Mode
+##      Manual Mode
 ```
 In Manual mode first of all you place your robots on the nodes that you want, 
 after that all you need to do is to decide which fruit you want to collect for each 
 robot and so on untill the game is over.
 ```
 
-###      Auto Mode
+##      Auto Mode
 ```
 In Auto mode sit back on your chair and let us do our best effort using our fine algorithams
 in order to collect as much fruit in our given time we guarantee to the best result we can do!
 ```
 
-### Game - Diagram
+## Game - Diagram
 <img src="images/Game_mannage.png" >
 
-### DataStructure - Diagram
+## DataStructure - Diagram
 <img src="images/DataStructure.png" >
 
