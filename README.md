@@ -30,3 +30,10 @@ robot and so on untill the game is over.
 In Auto mode sit back on your chair and let us do our best effort using our fine algorithams
 in order to collect as much fruit in our given time we guarantee to the best result we can do!
 ```
+
+### Game - Diagram
+<img src="images/Game_mannage.png" >
+
+### DataStructure - Diagram
+<img src="images/DataStructure.png" >
+
