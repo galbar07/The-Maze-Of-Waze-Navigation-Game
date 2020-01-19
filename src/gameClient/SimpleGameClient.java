@@ -15,6 +15,12 @@ import dataStructure.graph;
 
 public class SimpleGameClient {
 	
+	/**
+	 * By using simple game client we activate the game
+	 * @param a
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	public static void main(String[] a) throws JSONException, IOException {
 		test1();
 	}

@@ -16,12 +16,24 @@ import gameClient.Fruit_c;
 import gameClient.Robot;
 import utils.Point3D;
 
+/**
+ * This class holds the algorithams of which the robot find his best way to navagiate 
+ * through the graph 
+ * @author Gal bar Eden reuvani
+ *
+ */
 public class robot_algo {
 	private  game_service game_;
 	public  ArrayList<Fruit_c> all_fruits;
 	private  ArrayList<Robot>game_robots;
 	static int count=0;
 
+	/**
+	 * Constructor that compose of list of fruit which is sorted from the most value fruit to the lesser one
+	 * and composed of list of robots that are in the game
+	 * @param game
+	 * @throws JSONException
+	 */
 	public robot_algo(game_service game) throws JSONException {
 		game_=game;
 		count++;
@@ -31,11 +43,17 @@ public class robot_algo {
 		line = new JSONObject(info);
 		JSONObject ttt = line.getJSONObject("GameServer");
 		int rs = ttt.getInt("robots");
-		this.game_robots = getRobots(rs+count++);
+		count+=rs;
+		this.game_robots = getRobots(rs+ count);
 		}
 	
 
-
+	
+	/**
+	 * initalized list of robots to be null by using the robot class
+	 * @param robot_size
+	 * @return
+	 */
 	public ArrayList<Robot>getRobots(int robot_size){
 		ArrayList<Robot> rob = new ArrayList<Robot>();
 		for(int i=0;i<robot_size;i++) {
@@ -46,7 +64,12 @@ public class robot_algo {
 		return rob;
 
 	}
-
+	
+	/**
+	 * initalized list of fruits in order of value
+	 * @param game
+	 * @return
+	 */
 	private  ArrayList<Fruit_c> get_fruits(game_service game){
 		Fruit_c temp = new Fruit_c();
 		ArrayList<Fruit_c>fruits = new ArrayList<>();
@@ -81,7 +104,9 @@ public class robot_algo {
 	}
 
 	/**
-	 * a very simple random walk implementation!
+	 * This method gives me back my path to the fruit i desire 
+	 * basically it goes to the most expensive that avalible each time
+	 * and every 5 milisecond he chooses the best node to go to.
 	 * @param g
 	 * @param src
 	 * @return
@@ -93,16 +118,9 @@ public class robot_algo {
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
 		long t = this.get_game().timeToEnd();
-		
-		
 
 		if(t%5!=0) {
 			list_to_go_through=gr.shortestPath(src, this.bestNode(src));
-
-		//list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
-			//and from it to its dest node
-			//if(list_to_go_through==null) { return null;}
-			//	list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
 
 		}
 		else {
@@ -110,19 +128,15 @@ public class robot_algo {
 			list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
 
 		}
-		//if (gr.shortestPathDist(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc())>t)
-			//list_to_go_through=gr.shortestPath(src, this.bestNode(src));
-		//	list_to_go_through=gr.shortestPath(src, this.bestNode(src));
-			//	list_to_go_through=gr.shortestPath(src, this.bestNode(src));
-			//if (list_to_go_through.size()==1) {
-				//list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
-				//list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
-
 			
 
 		return list_to_go_through;
 	}
-	
+	/**
+	 * Find the best node to go to which can benift me the most
+	 * @param src
+	 * @return
+	 */
 	private int bestNode(int src) 
 	{
 		DGraph gg = new DGraph();
@@ -163,7 +177,13 @@ public class robot_algo {
 		return node.get(1).getKey();
 	}
 	
-
+	/**
+	 * compute the best way to go to the fruit the user wants
+	 * @param src
+	 * @param dest
+	 * @param list_to_go_through
+	 * @return
+	 */
 	public List<node_data> nextNodemanual(int src,int dest,List<node_data>list_to_go_through) {
 		DGraph gg = new DGraph();
 		gg.init(this.game_.getGraph().toString());
@@ -175,16 +195,31 @@ public class robot_algo {
 		return list_to_go_through;
 	}
 	
+	/**
+	 * return this game
+	 * @return
+	 */
 	public game_service get_game() {
 		return this.game_;
 	}
-	
+	/**
+	 * Return array list of robots playing the game
+	 * @return
+	 */
 	public ArrayList<Robot> get_inner_robots(){
 		return this.game_robots;
 	}
+	/**
+	 * Return array list of fruits in the game
+	 * @return
+	 */
 	public ArrayList<Fruit_c> get_inner_fruit(){
 		return this.all_fruits;
 	}
+	/**
+	 * update the fruit list based on the fruit location in current time
+	 * @return
+	 */
 	public ArrayList<Fruit_c> update_inner_fruit(){
 		return this.get_fruits(this.game_);
 	}

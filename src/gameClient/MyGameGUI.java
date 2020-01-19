@@ -27,7 +27,11 @@ import algorithms.robot_algo;
 import dataStructure.*;
 import utils.Point3D;
 import utils.StdDraw;
-
+/**
+ * This class draw to the user the graph and the movement of the fruit and robots on the graph
+ * @author Gal bar Eden Reuvani
+ *
+ */
 
 public class MyGameGUI extends JFrame implements ActionListener, MouseListener,Runnable {
 
@@ -55,13 +59,28 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 
 		
 		}
+	
+	/**
+	 * Return this kml object 
+	 * @return
+	 */
 	public KML_Logger getKml() {
 		return _kml;
 	}
+	/**
+	 * let the game mannage the kml file by the points the he visit
+	 * @param _kml
+	 */
 	private void setKml(KML_Logger _kml) {
 		this._kml = _kml;
 	}
 
+	/**
+	 * Setting the scale of the stdraw
+	 * @param mode
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	private void set_scale(int mode) throws JSONException, IOException {
 		
 		StdDraw.setCanvasSize(800,800);
@@ -86,6 +105,9 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		paint(mode);
 	}
 	
+	/**
+	 * In here you choose if you want to use manual mode or auto mode and by that you can start playing the game
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String str = e.getActionCommand();
@@ -113,28 +135,13 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			break;
 		}
 	}
-	//locate the robots in manual mode
-	public void locate_robots() {
-		String info = this.game.toString();
-		JSONObject line;
-		try {
-			
-			line = new JSONObject(info);
-			JSONObject ttt = line.getJSONObject("GameServer");
-			System.out.println(info);
-			int robot_size = ttt.getInt("robots");		
-			System.out.println("robot size is " + robot_size);
-		
-		for(int i=0;i<robot_size;i++) {
-			 String inputString = JOptionPane.showInputDialog(null, "Enter location for the robot " + i);
-			 int input = Integer.parseInt(inputString);
-			 game.addRobot(input);
-		}
-		}
-		catch (JSONException e) {e.printStackTrace();}
-	}
-	
-	//Manual mode 
+	/**
+	 * Here is the logic of the paint in manual mode first you draw the graph and locate the robots 
+	 * based on the user choice ,and then we let the user to decide to which fruit he wants to go
+	 * @throws JSONException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	private void paintManual() throws JSONException, IOException, InterruptedException {
         String inputString = JOptionPane.showInputDialog(null, "INPUT LEVEL");
         int input = Integer.parseInt(inputString);
@@ -181,7 +188,15 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		time =new Timer(delay, taskPerformer);
 		time.start();
 	}
-
+	/**
+	 *In here we draw the graph and locate the robots based on where is the most valuabale fruit 
+	 *after that we activate our algoritham to always find the most expensive fruit and gp there using the
+	 *best way to get there
+	 * 
+	 * @throws JSONException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	private void paintAuto() throws JSONException, IOException, InterruptedException {
 		    String inputString = JOptionPane.showInputDialog(null, "INPUT LEVEL BETWEEN 0-23");
 	        int input = Integer.parseInt(inputString);
@@ -226,7 +241,10 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			time =new Timer(delay, taskPerformer);
 			time.start();
 	}
-	
+	/**
+	 * we let the user decide if he wants to save a kml file of his session
+	 * @return
+	 */
 	public int dialogKML(){
 		try {
 	        Object[] options = {"Yes", "No"};
@@ -246,7 +264,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			return 1;
 		}
 	}
-	//Activate this function when the game is over
+	/**
+	 * When the game is over we wants to show the user that the game is over
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	private void gameover() throws IOException, InterruptedException {
 		time.stop();
 		t.join();
@@ -258,7 +280,9 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		
 	}
 	
-	//Thread that keep paint the graph while the game is running
+	/**
+	 * This is a thread that keeps draw the graph while the game is running
+	 */
 	@Override
 	public void run() {
 		while(this.game.isRunning()) {
@@ -274,6 +298,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		
 	}
 		
+	/**
+	 * Init the jframe 
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 
 	private void initGUI() throws JSONException, IOException  
 	{	
@@ -292,6 +321,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		this.addMouseListener(this);
 	}	
 	
+	/**
+	 * Draw the graph while the game is running
+	 * @param mode
+	 * @throws JSONException
+	 */
 	
 	public void paint(int mode) throws JSONException//add text in case two edges go the same direction
 	{
@@ -346,7 +380,10 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			StdDraw.show();
 			
 	}
-	
+	/**
+	 * Draws the robot on the graph
+	 * @throws JSONException
+	 */
 	private void paint_robots() throws JSONException {
 		List<String> robots = game.getRobots();
 		Iterator<String> r_iter=robots.iterator(); 
@@ -366,7 +403,10 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	    }
 		
 	}
-
+	/**
+	 * Draw the fruit on the graph
+	 * @throws JSONException
+	 */
 	private void paint_fruit() throws JSONException {
 		Iterator<String> f_iter = game.getFruits().iterator();
 		JSONObject line2 ;
@@ -389,7 +429,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		}
 	}
 
-
+	/**
+	 * Return the point that associate with that key
+	 * @param key
+	 * @return
+	 */
 	private Point3D pointreturn(int key) {
 		Collection<node_data> Paint_node = gg.getV();
 		for (node_data v : Paint_node) {

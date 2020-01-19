@@ -115,7 +115,9 @@ public class Fruit_c implements Fruit{
 		}
 		return null;
 	}
-	
+	/**
+	 * our comprator to sort the fruits
+	 */
 	public int compareTo(Fruit_c f) {
 		if (this.getValue()>f.getValue())
 			return 1;
