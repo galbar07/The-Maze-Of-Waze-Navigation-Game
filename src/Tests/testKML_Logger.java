@@ -25,7 +25,7 @@ class testKML_Logger {
 	}
 	@Test
 	void testBaseKML() {
-		kml.baseKML(1);
+		kml.basicKML(1);
 		
 	}
 	@Test
