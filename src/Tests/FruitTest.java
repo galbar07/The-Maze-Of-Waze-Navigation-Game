@@ -7,12 +7,13 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import Server.game_service;
+import dataStructure.DGraph;
 import dataStructure.EdgeData;
+import dataStructure.NodeData;
 
 import static org.junit.Assert.*;
 
 public class FruitTest {
-
 
 /**
  * testing the getTag function of a fruit 

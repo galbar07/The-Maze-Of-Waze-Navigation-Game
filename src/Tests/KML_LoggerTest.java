@@ -16,7 +16,7 @@ import utils.Point3D;
 class KML_LoggerTest {
 	static DGraph dg =new DGraph();
 	static NodeData dn=new NodeData(new Point3D(2,4));
-	static KML_Logger  kml = new KML_Logger(1,dg);
+	static KML_Logger  kml = new KML_Logger(24,dg);
 	
 	@BeforeEach
 	 void param() {
@@ -25,7 +25,7 @@ class KML_LoggerTest {
 	}
 	@Test
 	void BaseKMLtest() {
-		kml.basicKML(1);
+		kml.basicKML(24);
 		
 	}
 	@Test
