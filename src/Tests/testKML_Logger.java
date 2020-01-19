@@ -19,7 +19,7 @@ class testKML_Logger {
 	static KML_Logger  kml = new KML_Logger(1,dg);
 	
 	@BeforeEach
-	static void param() {
+	 void param() {
 		dg.addNode(dn);
 		
 	}
