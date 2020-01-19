@@ -94,8 +94,6 @@ public class game_manager {
 						int dest = ttt.getInt("dest");
 						String p[] = ttt.getString("pos").split(",");
 						
-						Point3D p_robot = new Point3D(Double.parseDouble(p[0]),Double.parseDouble(p[1]));
-
 						if(this.robot.get_inner_robots().get(rid).getNodeList() == null || (dest == -1 && this.robot.get_inner_robots().get(rid).getSize()==1)) {
 							this.robot.get_inner_robots().get(rid).SetNodeList(this.robot.nextNode(src, rid,this.robot.get_inner_robots().get(rid).getNodeList()));
 						}

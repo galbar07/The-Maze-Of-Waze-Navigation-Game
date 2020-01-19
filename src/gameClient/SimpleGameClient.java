@@ -16,6 +16,7 @@ import dataStructure.graph;
 public class SimpleGameClient {
 	
 	public static void main(String[] a) throws JSONException, IOException {
+		
 		test1();
 	}
 	

@@ -20,16 +20,17 @@ import dataStructure.node_data;
  * which implemented graph_algorithms, the graph supports the following algorithms:
  * is connect, the length of shortest path and the "vertices path", TSP.
  * the class can also init and save the graph .
- * @author itay simhayev and lilach mor
+ * @author Eden Reuveni
+ * @autor Gal Bar
  *
  */
 public class Graph_Algo implements graph_algorithms
 {
-	private graph g;
+	private graph graph_algo;
 
 	public Graph_Algo() {}
 	public Graph_Algo(graph g) {
-		this.g=g;
+		this.graph_algo=g;
 	}
 	/**
 	 * Init this set of algorithms on the parameter - graph.
@@ -38,7 +39,7 @@ public class Graph_Algo implements graph_algorithms
 	@Override
 	public void init(graph g) 
 	{
-		this.g=g;
+		this.graph_algo=g;
 	}
 
 	/**
@@ -51,16 +52,16 @@ public class Graph_Algo implements graph_algorithms
 		try
 		{    
 			FileInputStream file = new FileInputStream(file_name); 
-			ObjectInputStream in = new ObjectInputStream(file); 
-			g = (graph)in.readObject(); 
-			in.close(); 
+			ObjectInputStream input = new ObjectInputStream(file); 
+			graph_algo = (graph)input.readObject(); 
+			input.close(); 
 			file.close(); 
 		} 
-		catch(IOException ex) 
+		catch(IOException e) 
 		{ 
 			System.out.println("IOException is caught"); 
 		} 
-		catch(ClassNotFoundException ex) 
+		catch(ClassNotFoundException e) 
 		{ 
 			System.out.println("ClassNotFoundException is caught"); 
 		} 
@@ -75,7 +76,7 @@ public class Graph_Algo implements graph_algorithms
 		{    
 			FileOutputStream file = new FileOutputStream(file_name); 
 			ObjectOutputStream out = new ObjectOutputStream(file); 
-			out.writeObject(g); 
+			out.writeObject(graph_algo); 
 			out.close(); 
 			file.close(); 
 		}   
@@ -92,23 +93,23 @@ public class Graph_Algo implements graph_algorithms
 	@Override
 	public boolean isConnected()
 	{
-		int first=0;//if its the first iteration
+		int firstNode=0;//if its the first iteration
 		int src=0,dest;
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		for(Iterator<node_data> allNodes=graph_algo.getV().iterator();allNodes.hasNext();)
 		{
-			if(first==0) //check if the first vertex is reachable to the other
+			if(firstNode==0) //check if the first vertex is reachable to the other
 			{
-				first++;
-				src=verIter.next().getKey();
-				int count=countReachableVer(src);
-				if(count!=g.nodeSize()-1)
+				firstNode++;
+				src=allNodes.next().getKey();
+				int count=countReachableNodes(src);
+				if(count!=graph_algo.nodeSize()-1)
 					return false;	
 				resetTag();
 			}
 			else //check if every vertex has a path to src
 			{
-				dest=verIter.next().getKey();
-				if(!isPath(dest,src))
+				dest=allNodes.next().getKey();
+				if(!isAValidPath(dest,src))
 					return false;
 				resetTag();
 			}
@@ -124,26 +125,26 @@ public class Graph_Algo implements graph_algorithms
 	@Override
 	public double shortestPathDist(int src, int dest) 
 	{
-		if(g.getNode(src)==null||g.getNode(dest)==null)
+		if(graph_algo.getNode(src)==null||graph_algo.getNode(dest)==null)
 		{
-			throw new RuntimeException("The vertex is not in the graph");
+			throw new RuntimeException("The node is not in the graph");
 		}
 		if(src==dest)
 			return 0;
-		this.weightInfi();//set all the weight vertices to infinity
+		this.setWeight();//set all the weight vertices to infinity
 		this.resetInfo();// set all "father" vertices to null
 		this.resetTag();// set all "color" vertices to white
-		g.getNode(src).setWeight(0);
-		g.getNode(src).setTag(1);
+		graph_algo.getNode(src).setWeight(0);
+		graph_algo.getNode(src).setTag(1);
 		try 
 		{
-			for(Iterator<edge_data> edgeIter=g.getE(src).iterator();edgeIter.hasNext();)
+			for(Iterator<edge_data> iteratorForEdges=graph_algo.getE(src).iterator();iteratorForEdges.hasNext();)
 			{ //for the first vertex calculate the cost to arrive for each neighbor
-				edge_data e=edgeIter.next();
-				if(g.getNode(e.getDest()).getWeight()>g.getNode(src).getWeight()+e.getWeight())
+				edge_data e=iteratorForEdges.next();
+				if(graph_algo.getNode(e.getDest()).getWeight()>graph_algo.getNode(src).getWeight()+e.getWeight())
 				{
-					g.getNode(e.getDest()).setWeight(g.getNode(src).getWeight()+e.getWeight());
-					g.getNode(e.getDest()).setInfo(""+src);
+					graph_algo.getNode(e.getDest()).setWeight(graph_algo.getNode(src).getWeight()+e.getWeight());
+					graph_algo.getNode(e.getDest()).setInfo(""+src);
 				}
 			}
 		}
@@ -151,28 +152,28 @@ public class Graph_Algo implements graph_algorithms
 		{
 			return Double.POSITIVE_INFINITY;
 		}		
-		ArrayList<node_data> ver=new ArrayList<node_data>();
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		ArrayList<node_data> iteratorForNodes=new ArrayList<node_data>();
+		for(Iterator<node_data> itertorForNodes=graph_algo.getV().iterator();itertorForNodes.hasNext();)
 		{ //insert all the vertices to array list
-			node_data v=verIter.next();
-			if(v.getKey()!=src)
+			node_data n=itertorForNodes.next();
+			if(n.getKey()!=src)
 			{
-				ver.add(v);
+				iteratorForNodes.add(n);
 			}
 		}
-		while(ver.size()!=0)
+		while(iteratorForNodes.size()!=0)
 		{
-			int minVer=findMinVer(ver);//find the vertex with the minimum weight and delete it from the array
-			g.getNode(minVer).setTag(1);
+			int minimalNode=findMinNode(iteratorForNodes);//find the vertex with the minimum weight and delete it from the array
+			graph_algo.getNode(minimalNode).setTag(1);
 			try 
 			{
-				for(Iterator<edge_data> edgeIter=g.getE(minVer).iterator();edgeIter.hasNext();)
+				for(Iterator<edge_data> iteratorForEdges=graph_algo.getE(minimalNode).iterator();iteratorForEdges.hasNext();)
 				{
-					edge_data e=edgeIter.next();
-					if(g.getNode(e.getDest()).getTag()==0&&g.getNode(e.getDest()).getWeight()>g.getNode(minVer).getWeight()+e.getWeight())
+					edge_data e=iteratorForEdges.next();
+					if(graph_algo.getNode(e.getDest()).getTag()==0&&graph_algo.getNode(e.getDest()).getWeight()>graph_algo.getNode(minimalNode).getWeight()+e.getWeight())
 					{
-						g.getNode(e.getDest()).setWeight(g.getNode(minVer).getWeight()+e.getWeight());
-						g.getNode(e.getDest()).setInfo(""+minVer);
+						graph_algo.getNode(e.getDest()).setWeight(graph_algo.getNode(minimalNode).getWeight()+e.getWeight());
+						graph_algo.getNode(e.getDest()).setInfo(""+minimalNode);
 					}
 				}	
 			}
@@ -180,7 +181,7 @@ public class Graph_Algo implements graph_algorithms
 			{}
 		}
 		this.resetTag();
-		return g.getNode(dest).getWeight();
+		return graph_algo.getNode(dest).getWeight();
 	}
 	/**
 	 * returns the the shortest path between src to dest - as an ordered List of nodes:
@@ -193,34 +194,34 @@ public class Graph_Algo implements graph_algorithms
 	@Override
 	public List<node_data> shortestPath(int src, int dest) 
 	{
-		if(g.getNode(src)==null||g.getNode(dest)==null)
+		if(graph_algo.getNode(src)==null||graph_algo.getNode(dest)==null)
 		{
 			throw new RuntimeException("The vertex is not in the graph");
 		}
-		List <node_data> path=new ArrayList <node_data>();
+		List <node_data> list_to_go_through=new ArrayList <node_data>();
 		if(src==dest)
 		{
-			path.add(g.getNode(src));
-			return path;
+			list_to_go_through.add(graph_algo.getNode(src));
+			return list_to_go_through;
 		}
-		double dis=this.shortestPathDist(src,dest);
-		if(dis<Double.POSITIVE_INFINITY)//if there is a path
+		double distance=this.shortestPathDist(src,dest);
+		if(distance<Double.POSITIVE_INFINITY)//if there is a path
 		{
-			node_data v=g.getNode(dest);
-			path.add(v);
+			node_data v=graph_algo.getNode(dest);
+			list_to_go_through.add(v);
 			while(!v.getInfo().isEmpty())//insert the path from dest to src to the array
 			{
 				int father=Integer.parseInt(v.getInfo());
-				path.add(g.getNode(father));
-				v=g.getNode(father);
+				list_to_go_through.add(graph_algo.getNode(father));
+				v=graph_algo.getNode(father);
 			}
-			List <node_data> OPath=new ArrayList <node_data>();
+			List <node_data> optimalPath=new ArrayList <node_data>();
 
-			for(int i=path.size()-1;i>=0;i--)//reverse the array
+			for(int i=list_to_go_through.size()-1;i>=0;i--)//reverse the array
 			{
-				OPath.add(path.get(i));
+				optimalPath.add(list_to_go_through.get(i));
 			}
-			return OPath;
+			return optimalPath;
 		}
 		else 
 			return null;
@@ -239,30 +240,30 @@ public class Graph_Algo implements graph_algorithms
 		if(!this.isConnected())
 			return null;
 		List<node_data> TSP=new ArrayList<node_data>();
-		int indexSrc=(int)(Math.random()*targets.size());//start from random vertex in the list
-		int src=targets.get(indexSrc);
-		targets.remove(indexSrc);
-		int dest=0,indexDest=0;
-		TSP.add(g.getNode(src));
+		int indexOfSrc=(int)(Math.random()*targets.size());//start from random vertex in the list
+		int src=targets.get(indexOfSrc);
+		targets.remove(indexOfSrc);
+		int dest=0,indexOfDest=0;
+		TSP.add(graph_algo.getNode(src));
 		while(targets.size()>0) 
 		{
-			double minWay=Double.POSITIVE_INFINITY;
+			double minimalWay=Double.POSITIVE_INFINITY;
 			for(int j=0;j<targets.size();j++) //find the vertex that is the closest to src
 			{
-				if(this.shortestPathDist(src, targets.get(j))<minWay) 
+				if(this.shortestPathDist(src, targets.get(j))<minimalWay) 
 				{
-					minWay=this.shortestPathDist(src, targets.get(j));
+					minimalWay=this.shortestPathDist(src, targets.get(j));
 					dest=targets.get(j);
-					indexDest=j;
+					indexOfDest=j;
 				}
 			}
-			List<node_data> TSPtemp=this.shortestPath(src, dest);
-			for(int j=1;j<TSPtemp.size();j++) //add the vertices from i to i+1 to the list
+			List<node_data> tempTSP=this.shortestPath(src, dest);
+			for(int j=1;j<tempTSP.size();j++) //add the vertices from i to i+1 to the list
 			{
-				TSP.add(TSPtemp.get(j));
+				TSP.add(tempTSP.get(j));
 			}
 			src=dest;
-			targets.remove(indexDest);
+			targets.remove(indexOfDest);
 		}
 		return TSP;
 	}
@@ -276,16 +277,16 @@ public class Graph_Algo implements graph_algorithms
 		this.save("copy.txt");
 		Graph_Algo copy=new Graph_Algo();
 		copy.init("copy.txt");
-		return copy.g;
+		return copy.graph_algo;
 	}
 	/**
 	 * change the color of all the vertices to white (0)
 	 */
 	private void resetTag()
 	{
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		for(Iterator<node_data> iteratorForNodes=graph_algo.getV().iterator();iteratorForNodes.hasNext();)
 		{
-			verIter.next().setTag(0);
+			iteratorForNodes.next().setTag(0);
 		}
 	}
 	/**
@@ -293,12 +294,12 @@ public class Graph_Algo implements graph_algorithms
 	 */
 	public void resetTagEdge()
 	{
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		for(Iterator<node_data> iteratorForNodes=graph_algo.getV().iterator();iteratorForNodes.hasNext();)
 		{
-			int src=verIter.next().getKey();
+			int src=iteratorForNodes.next().getKey();
 			try 
 			{
-				for(Iterator<edge_data> edgeIter=g.getE(src).iterator();edgeIter.hasNext();)
+				for(Iterator<edge_data> edgeIter=graph_algo.getE(src).iterator();edgeIter.hasNext();)
 				{
 					edgeIter.next().setTag(0);
 				}	
@@ -310,11 +311,11 @@ public class Graph_Algo implements graph_algorithms
 	/**
 	 * change the weight of all the vertices to infinity
 	 */
-	private void weightInfi()
+	private void setWeight()
 	{
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		for(Iterator<node_data> iteratorForNodes=graph_algo.getV().iterator();iteratorForNodes.hasNext();)
 		{
-			verIter.next().setWeight(Double.POSITIVE_INFINITY);
+			iteratorForNodes.next().setWeight(Double.POSITIVE_INFINITY);
 		}
 	}
 	/**
@@ -322,7 +323,7 @@ public class Graph_Algo implements graph_algorithms
 	 */
 	private void resetWeight()
 	{
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		for(Iterator<node_data> verIter=graph_algo.getV().iterator();verIter.hasNext();)
 		{
 			verIter.next().setWeight(0);
 		}
@@ -332,7 +333,7 @@ public class Graph_Algo implements graph_algorithms
 	 */
 	private void resetInfo()
 	{
-		for(Iterator<node_data> verIter=g.getV().iterator();verIter.hasNext();)
+		for(Iterator<node_data> verIter=graph_algo.getV().iterator();verIter.hasNext();)
 		{
 			verIter.next().setInfo("");
 		}
@@ -342,19 +343,19 @@ public class Graph_Algo implements graph_algorithms
 	 * @param key - the id of the vertex
 	 * @return  the amount of vertices that vertex key can reach them
 	 */
-	private int countReachableVer(int key)
+	private int countReachableNodes(int key)
 	{
-		g.getNode(key).setTag(1);//change the color of vertex key to gray
+		graph_algo.getNode(key).setTag(1);//change the color of vertex key to gray
 		int count=0;
 		try 
 		{
-			for(Iterator<edge_data> edgeIter=g.getE(key).iterator();edgeIter.hasNext();)
+			for(Iterator<edge_data> iteratorForEdges=graph_algo.getE(key).iterator();iteratorForEdges.hasNext();)
 			{
-				int dest =edgeIter.next().getDest();
-				if(g.getNode(dest).getTag()==0)
+				int dest =iteratorForEdges.next().getDest();
+				if(graph_algo.getNode(dest).getTag()==0)
 				{
 					count++;
-					count=count+countReachableVer(dest);
+					count=count+countReachableNodes(dest);
 				}
 			}
 			return count;
@@ -370,16 +371,16 @@ public class Graph_Algo implements graph_algorithms
 	 * @param dest - end (target) node
 	 * @return true if there is a path from vertex src to  vertex dest, else false
 	 */
-	private boolean isPath(int src,int dest)
+	private boolean isAValidPath(int src,int dest)
 	{
 		boolean path=false;
-		g.getNode(src).setTag(1);//change the color of vertex key to gray
+		graph_algo.getNode(src).setTag(1);//change the color of vertex key to gray
 		try 
 		{
-			for(Iterator<edge_data> edgeIter=g.getE(src).iterator();edgeIter.hasNext();)
+			for(Iterator<edge_data> iteratorForEdges=graph_algo.getE(src).iterator();iteratorForEdges.hasNext();)
 			{
-				int verPath =edgeIter.next().getDest();
-				if(g.getNode(verPath).getTag()==0)//check if the color is white
+				int verPath =iteratorForEdges.next().getDest();
+				if(graph_algo.getNode(verPath).getTag()==0)//check if the color is white
 				{
 					if(verPath==dest)//if verPath is the vertex that we search
 					{
@@ -387,7 +388,7 @@ public class Graph_Algo implements graph_algorithms
 					}
 					else
 					{
-						if(!path&&isPath(verPath,dest))//check if from this vertex there is a edge to dest
+						if(!path&&isAValidPath(verPath,dest))//check if from this vertex there is a edge to dest
 						{
 							path=true;
 						}
@@ -408,7 +409,7 @@ public class Graph_Algo implements graph_algorithms
 	 * @param ver - collection of the vertices
 	 * @return the id of the vertex with the minimum weight
 	 */
-	private int findMinVer(ArrayList <node_data> ver)
+	private int findMinNode(ArrayList <node_data> ver)
 	{
 		double weight=Double.POSITIVE_INFINITY;
 		int minVer=0;

@@ -81,7 +81,7 @@ public class robot_algo {
 	}
 
 	/**
-	 * a very simple random walk implementation!
+	 * 
 	 * @param g
 	 * @param src
 	 * @return
@@ -97,7 +97,7 @@ public class robot_algo {
 		
 
 		if(t%5!=0) {
-			list_to_go_through=gr.shortestPath(src, this.bestNode(src));
+			list_to_go_through=gr.shortestPath(src, this.closestNextNode(src));
 
 		//list_to_go_through = gr.shortestPath(src ,this.all_fruits.get(id%this.all_fruits.size()).getSrc()); 
 			//and from it to its dest node
@@ -123,22 +123,22 @@ public class robot_algo {
 		return list_to_go_through;
 	}
 	
-	private int bestNode(int src) 
+	private int closestNextNode(int src) 
 	{
 		DGraph gg = new DGraph();
 		gg.init(this.game_.getGraph());
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
-		double minpath=Double.POSITIVE_INFINITY;
-		int dest=0;int placeFruit=0;
-		boolean isGetDest=false;
+		double smallestPath=Double.POSITIVE_INFINITY;
+		int dest=0;int placeOfFruit=0;
+		boolean isDest=false;
 		for(int i=0;i<this.all_fruits.size();i++) //find the fruit that is closest to the src
 		{
-			if(this.all_fruits.get(i).getTag()==0&&gr.shortestPathDist(src, this.all_fruits.get(i).getSrc())<minpath)
+			if(this.all_fruits.get(i).getTag()==0&&gr.shortestPathDist(src, this.all_fruits.get(i).getSrc())<smallestPath)
 			{ //check if there isn't robot that moves already to that fruit and if its the closest fruit until now
-					placeFruit=i;
-				 	isGetDest=true;
-					minpath=gr.shortestPathDist(src, this.all_fruits.get(i).getSrc());
+					placeOfFruit=i;
+				 	isDest=true;
+					smallestPath=gr.shortestPathDist(src, this.all_fruits.get(i).getSrc());
 					if(src==this.all_fruits.get(i).getSrc()) 
 					{
 						dest=this.all_fruits.get(i).getDest();
@@ -147,7 +147,7 @@ public class robot_algo {
 						dest=this.all_fruits.get(i).getSrc();
 			}
 		}
-		if(!isGetDest) //if there isnt a fruit available for this robots
+		if(!isDest) //if there isnt a fruit available for this robots
 		{
 			if(src==this.all_fruits.get(0).getSrc()) 
 			{
@@ -157,10 +157,10 @@ public class robot_algo {
 			else
 				dest=this.all_fruits.get(0).getSrc();
 		}
-		this.all_fruits.get(placeFruit).setTag(1);
-		gg.getEdge(this.all_fruits.get(placeFruit).getDest(), this.all_fruits.get(placeFruit).getSrc()).setTag(1);
-		List<node_data> node=gr.shortestPath(src, dest);
-		return node.get(1).getKey();
+		this.all_fruits.get(placeOfFruit).setTag(1);
+		gg.getEdge(this.all_fruits.get(placeOfFruit).getDest(), this.all_fruits.get(placeOfFruit).getSrc()).setTag(1);
+		List<node_data> bestNode=gr.shortestPath(src, dest);
+		return bestNode.get(1).getKey();
 	}
 	
 
