@@ -10,17 +10,25 @@ import algorithms.robot_algo;
 import dataStructure.edge_data;
 import utils.Point3D;
 
+/**
+ * This class mannage the behavior of the robots both in manual mode and in auto mode
+ * @author Gal bar Eden reuveni
+ *
+ */
 public class game_manager {
 
 	private robot_algo robot;
 	
-	
+	//constructor
 	public game_manager(robot_algo robot) {
 		this.robot = robot;
 		
 	}
 	
-	//locate the robots in manual mode by the user decision
+	/**
+	 * locate the robots in manual mode by the user decision
+	 * @throws JSONException
+	 */
 	public void locate_robots_manual() throws JSONException{
 		String info = this.robot.get_game().toString();
 		JSONObject line;
@@ -36,7 +44,10 @@ public class game_manager {
 			 this.robot.get_game().addRobot(input);
 		}
 	}
-	//Moves the robots in manual mode 
+	/**
+	 * Moves the robots in manual mode by the choice of the user
+	 * @throws JSONException
+	 */
 		public void move_robots_manual() throws JSONException {
 			List<String> log = this.robot.get_game().move();
 			if(log!=null) {

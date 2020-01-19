@@ -23,6 +23,11 @@ import org.w3c.dom.Element;
 import dataStructure.DGraph;
 import dataStructure.node_data;
 
+/**
+ * This class let the user build his own kml file on the level he wants both in manual mode and in auto one
+ * @author Gal bar Eden reuveni
+ *
+ */
 public class KML_Logger {
 	
 	private Element _game;
