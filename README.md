@@ -32,7 +32,7 @@ in order to collect as much fruit in our given time we guarantee to the best res
 
 ##      KML
 
-By the end of each level you have the chance to save your own result in a kml file ,
+At the end of each level you have the chance to save your own result in a kml file ,
 and analyze it.<br><br>
 Here is an exemple for level 2:
 
