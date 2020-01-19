@@ -22,6 +22,7 @@ public class SimpleGameClient {
 	 * @throws IOException
 	 */
 	public static void main(String[] a) throws JSONException, IOException {
+		
 		test1();
 	}
 	

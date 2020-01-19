@@ -6,7 +6,7 @@ import dataStructure.node_data;
 /**
  * This class represent robot in the game
  * this robot has list of nodes to go to
- * @author Gal bar Eden Reuvani
+ * @author Gal bar Eden Reuveni
  *
  */
 public class Robot implements Robots{

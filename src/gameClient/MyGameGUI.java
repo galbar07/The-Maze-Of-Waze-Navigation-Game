@@ -29,7 +29,7 @@ import utils.Point3D;
 import utils.StdDraw;
 /**
  * This class draw to the user the graph and the movement of the fruit and robots on the graph
- * @author Gal bar Eden Reuvani
+ * @author Gal bar Eden Reuveni
  *
  */
 
@@ -248,9 +248,9 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	public int dialogKML(){
 		try {
 	        Object[] options = {"Yes", "No"};
-	        int x = JOptionPane.showOptionDialog(null, "Do you want to save this game as kml file?\n"
-	        		+ "The file will located in your Project under data folder.\n"
-	        		+ "No is default option",
+	        int x = JOptionPane.showOptionDialog(null, "Do you want to save this game as KML file?\n"
+	        		+ ""
+	        		+ "",
 	                "",
 	                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 

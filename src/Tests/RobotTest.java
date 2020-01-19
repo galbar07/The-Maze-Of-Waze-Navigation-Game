@@ -16,7 +16,9 @@ import java.util.List;
 public class RobotTest {
 
    private Robot rob;
-   
+   /**
+    * testing the getSize function of nodes a robot has to go through
+    */
    @Test
    public void testGetSize() {
 	   List<node_data>list_to_go_through=new ArrayList<>();
@@ -26,7 +28,9 @@ public class RobotTest {
 	   if (this.rob.list_to_go_through.size()!=1)
 		   fail("getSize function isn't working");
    }
-   
+   /**
+    * testing the getNodeList function of all the nodes a robot has to go through
+    */
    @Test
    public void testGetNodeList() {
 	   List<node_data>list_to_go_through=new ArrayList<>();
@@ -37,7 +41,9 @@ public class RobotTest {
 	   if (!this.rob.getNodeList().contains(n))
 		   fail("getNodeList function isn't working");
    }
-   
+   /**
+    * testing the getSize function of nodes a robot has to go through
+    */
    @Test
    public void testSetNodeList() {
 	   List<node_data>list_to_go_through=new ArrayList<>();

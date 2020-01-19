@@ -13,10 +13,10 @@ import static org.junit.Assert.*;
 
 public class FruitTest {
 
-	
-	private game_service game;
 
-
+/**
+ * testing the getTag function of a fruit 
+ */
     @Test
     public void TestGetTag() {
     	  Fruit_c f1 = new Fruit_c(10,1,12,13);
@@ -28,7 +28,9 @@ public class FruitTest {
         	fail("getTag function isn't working");
     }
 
-
+    /**
+     * testing the getType function of a fruit 
+     */
     @Test
     public void TestGetType() {
     	  Fruit_c f1 = new Fruit_c(10,1,12,13);
@@ -36,7 +38,9 @@ public class FruitTest {
        if (f1.getType()!=1 || f2.getType()!=-1)
     	   fail("getType function isn't working");
     }
-
+    /**
+     * testing the getSrc function of a fruit 
+     */
     @Test
     public void TestGetSrc() {
     	  Fruit_c f1 = new Fruit_c(10,1,12,13);
@@ -45,6 +49,9 @@ public class FruitTest {
    	   fail("getSrc function isn't working");
 
     }
+    /**
+     * testing the getDest function of a fruit 
+     */
     @Test
     public void TestGetDest() {
     	  Fruit_c f1 = new Fruit_c(10,1,12,13);
@@ -52,6 +59,10 @@ public class FruitTest {
     	 if(f1.getDest()!=13 || f2.getDest()!=12)
     	   	   fail("getDest function isn't working");
     }
+    
+    /**
+     * testing the getValue function of a fruit 
+     */
     @Test
     public void testGetValue() {
     	  Fruit_c f1 = new Fruit_c(10,1,12,13);
