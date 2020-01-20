@@ -1,5 +1,5 @@
 package gameClient;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,40 +10,36 @@ import org.json.JSONObject;
 
 import Server.Game_Server;
 import Server.game_service;
-import dataStructure.DGraph;
-import dataStructure.edge_data;
-import dataStructure.graph;
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
 import oop_utils.OOP_Point3D;
-
-public class SimpleGameClient {
-	
-	/**
-	 * By using simple game client we activate the game
-	 * @param a
-	 * @throws JSONException
-	 * @throws IOException
-	 */
-/*	public static void main(String[] a) throws JSONException, IOException {
-		
-		test1();
-	}
-	
-	public static void test1() throws JSONException, IOException {
-
-		MyGameGUI paint = new MyGameGUI();
-		
-	}
+/**
+* This class represents a simple example for using the GameServer API:
+* the main file performs the following tasks:
+* 0. login as a user ("999") for testing - do use your ID.
+* 1. Creates a game_service [0,23] (user "999" has stage 9, can play in scenarios [0,9] not above
+*    Note: you can also choose -1 for debug (allowing a 600 second game).
+* 2. Constructs the graph from JSON String
+* 3. Gets the scenario JSON String 
+* 5. Add a set of robots  // note: in general a list of robots should be added
+* 6. Starts game 
+* 7. Main loop (vary simple thread)
+* 8. move the robot along the current edge 
+* 9. direct to the next edge (if on a node) 
+* 10. prints the game results (after "game over"), and write a KML: 
+*     Note: will NOT work on case -1 (debug).
+*  
+* @author boaz.benmoshe
+*
 */
-	public static void main(String[] a) throws JSONException, IOException {
-		Thread client = new Thread(new MyGameGUI());
+public class Ex4_Client implements Runnable{
+	public static void main(String[] a) {
+		Thread client = new Thread(new Ex4_Client());
 		client.start();
-	//	MyGameGUI paint = new MyGameGUI();
-
 	}
-	/*@Override
+	
+	@Override
 	public void run() {
 		int scenario_num = 0; // current "stage is 9, can play[0,9], can NOT 10 or above
 		int id = 999;
@@ -56,12 +52,12 @@ public class SimpleGameClient {
 		gg.init(g);
 		init(game);
 		
-		//game.startGame();
+		game.startGame();
 		int ind=0;
 		long dt=50;
 		int jj = 0;
 		while(game.isRunning()) {
-			//moveRobots(game, gg);
+			moveRobots(game, gg);
 			try {
 				List<String> stat = game.getRobots();
 				for(int i=0;i<stat.size();i++) {
@@ -80,13 +76,13 @@ public class SimpleGameClient {
 		game.sendKML(remark); // Should be your KML (will not work on case -1).
 		System.out.println(res);
 	}
-	*//** 
+	/** 
 	 * Moves each of the robots along the edge, 
 	 * in case the robot is on a node the next destination (next edge) is chosen (randomly).
 	 * @param game
 	 * @param gg
 	 * @param log
-	 *//*
+	 */
 	private static void moveRobots(game_service game, oop_graph gg) {
 		List<String> log = game.move();
 		ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
@@ -117,12 +113,12 @@ public class SimpleGameClient {
 			}
 		}
 	}
-	*//**
+	/**
 	 * a very simple random walk implementation!
 	 * @param g
 	 * @param src
 	 * @return
-	 *//*
+	 */
 	private static int nextNode(oop_graph g, int src) {
 		int ans = -1;
 		Collection<oop_edge_data> ee = g.getE(src);
@@ -159,6 +155,4 @@ public class SimpleGameClient {
 		catch (JSONException e) {e.printStackTrace();}
 		
 	}
-
-}*/
 }
