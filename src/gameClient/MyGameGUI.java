@@ -56,7 +56,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		this.setVisible(true);
 		BufferedImage image = ImageIO.read(new File("images/waze_maze.png"));
 		this.getGraphics().drawImage(image, 90, 100, 400,400, null);
-
+		Game_Server.login(302313184);
+		SimpleDB.printLog();
 		
 		}
 	
@@ -229,7 +230,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 			game.startGame();
 			t = new Thread(this);
 			t.start();			 
-			int delay = 120; //milliseconds
+			int delay = 135; //milliseconds
 			
 			ActionListener taskPerformer = new ActionListener() {
 			      public void actionPerformed(ActionEvent evt) {
