@@ -133,8 +133,22 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 				} catch (IOException e1) {e1.printStackTrace();}		
 			} catch (JSONException e1) {e1.printStackTrace();}
 			break;
+			
+		    case "Test Boaz":{
+		    	AutomaticCheck();
+		    	
+		    }
 		}
 	}
+	//Automatic check for boaz test
+	private void AutomaticCheck() {
+		
+		
+		
+		
+		
+	}
+
 	/**
 	 * Here is the logic of the paint in manual mode first you draw the graph and locate the robots 
 	 * based on the user choice ,and then we let the user to decide to which fruit he wants to go
@@ -288,6 +302,8 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 	int ind=0;
 	long dt=120;
 	int jj = 0;
+	int id = 999;
+	Game_Server.login(id);
 	while(this.game.isRunning()) {
 		//moveRobots(game, gg);
 		try {
@@ -297,7 +313,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 				System.out.println(jj+") "+stat.get(i));
 			}
 			ind++;
-			Thread.sleep(dt);
+		//	Thread.sleep(dt);
 			jj++;
 		}
 		catch(Exception e) {
@@ -329,8 +345,11 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		item1.addActionListener(this);
 		MenuItem item2 = new MenuItem("Manual");
 		item2.addActionListener(this);
+		MenuItem item3 = new MenuItem("Test Boaz");
+		item3.addActionListener(this);
 		menu.add(item1);
 		menu.add(item2);
+		menu.add(item3);
 		this.addMouseListener(this);
 	}	
 	

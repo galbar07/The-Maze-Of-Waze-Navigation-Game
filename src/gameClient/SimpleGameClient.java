@@ -38,9 +38,9 @@ public class SimpleGameClient {
 	}
 */
 	public static void main(String[] a) throws JSONException, IOException {
-		Thread client = new Thread(new MyGameGUI());
-		client.start();
-	//	MyGameGUI paint = new MyGameGUI();
+//		Thread client = new Thread(new MyGameGUI());
+//		client.start();
+		MyGameGUI paint = new MyGameGUI();
 
 	}
 	/*@Override
