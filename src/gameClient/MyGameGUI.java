@@ -376,7 +376,7 @@ public class MyGameGUI extends JFrame implements ActionListener, MouseListener,R
 		JFrame Show = new JFrame();
 		StdDraw.setCanvasSize(1,1);
 		JOptionPane.showMessageDialog(Show,"Game Over you scored :" + this.game.toString() );
-		SimpleDB.printLog();
+		//SimpleDB.printLog();
 		
 	}
 	
