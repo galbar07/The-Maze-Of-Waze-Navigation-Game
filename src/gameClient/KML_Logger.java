@@ -107,7 +107,7 @@ public class KML_Logger {
 
 			DOMSource domSource = new DOMSource(getDocument());
 			StreamResult streamResult = new StreamResult(new File(get_kmlFilePath()));
-
+			
 			transformer.transform(domSource, streamResult);
 
 			System.out.println("File Saved");

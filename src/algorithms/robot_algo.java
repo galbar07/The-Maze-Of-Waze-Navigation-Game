@@ -19,7 +19,7 @@ import utils.Point3D;
 /**
  * This class holds the algorithams of which the robot find his best way to navagiate 
  * through the graph 
- * @author Gal bar Eden reuveni
+ * @author Gal Bar Eden Reuveni
  *
  */
 public class robot_algo {
@@ -45,12 +45,12 @@ public class robot_algo {
 		int rs = ttt.getInt("robots");
 		count+=rs;
 		this.game_robots = getRobots(rs+ count);
-		}
-	
+	}
 
-	
+
+
 	/**
-	 * initalized list of robots to be null by using the robot class
+	 * Initialized list of robots to be null by using the robot class
 	 * @param robot_size
 	 * @return
 	 */
@@ -64,9 +64,9 @@ public class robot_algo {
 		return rob;
 
 	}
-	
+
 	/**
-	 * initalized list of fruits in order of value
+	 * Initialized list of fruits in order of value
 	 * @param game
 	 * @return
 	 */
@@ -93,10 +93,10 @@ public class robot_algo {
 				//each fruit will be associated to its edge
 				fruits.add(new Fruit_c(value,type,E.getSrc(),E.getDest()));
 			}
-			
+
 			Collections.sort(fruits,Comparator.comparing(Fruit_c::getValue));
 			Collections.reverse(fruits);
-}
+		}
 		catch (JSONException e) {e.printStackTrace();}
 
 
@@ -112,16 +112,38 @@ public class robot_algo {
 	 * @param g
 	 * @param src
 	 * @return
+	 * @throws JSONException 
 	 */
-	public List <node_data> nextNode(int src, int id,List<node_data>list_to_go_through) {
-		
+	public List <node_data> nextNode(int src, int id,List<node_data>list_to_go_through) throws JSONException {
+
 		DGraph gg = new DGraph();
 		gg.init(this.game_.getGraph().toString());
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
 		long t = this.get_game().timeToEnd();
+		JSONObject line = new JSONObject( this.get_game().toString());
+		JSONObject ttt = line.getJSONObject("GameServer");
+		int game_level = ttt.getInt("game_level");
+		int p;
+		switch(game_level) {
+		case 9:
+			p = 4;
+			break;
+		case 13:
+			p=10;
+			break;
+		case 16:
+			p=10;
+			break;
+		case 20:
+			p=12;
+			break;
+		default:
+			p=5;
+			break;
 
-		if(t%5!=0) {
+		}
+		if(t%p!=0) {
 			list_to_go_through=gr.shortestPath(src, this.closestNextNode(src));
 
 		}
@@ -130,12 +152,12 @@ public class robot_algo {
 			list_to_go_through.add(gg.getNode(this.all_fruits.get(id%this.all_fruits.size()).getDest()));
 
 		}
-			
+
 
 		return list_to_go_through;
 	}
 
-	
+
 	/**
 	 * Find the best node to go to which can benefit me the most
 	 * @param src
@@ -154,22 +176,22 @@ public class robot_algo {
 		{
 			if(this.all_fruits.get(i).getTag()==0&&gr.shortestPathDist(src, this.all_fruits.get(i).getSrc())<smallestPath)
 			{ //check if there isn't robot that moves already to that fruit and if its the closest fruit until now
-					placeOfFruit=i;
-				 	isDest=true;
-					smallestPath=gr.shortestPathDist(src, this.all_fruits.get(i).getSrc());
-					if(src==this.all_fruits.get(i).getSrc()) 
-					{
-						dest=this.all_fruits.get(i).getDest();
-					}
-					else
-						dest=this.all_fruits.get(i).getSrc();
+				placeOfFruit=i;
+				isDest=true;
+				smallestPath=gr.shortestPathDist(src, this.all_fruits.get(i).getSrc());
+				if(src==this.all_fruits.get(i).getSrc()) 
+				{
+					dest=this.all_fruits.get(i).getDest();
+				}
+				else
+					dest=this.all_fruits.get(i).getSrc();
 			}
 		}
-		if(!isDest) //if there isnt a fruit available for this robots
+		if(!isDest) //if there isn't a fruit available for this robots
 		{
 			if(src==this.all_fruits.get(0).getSrc()) 
 			{
-			
+
 				dest=this.all_fruits.get(0).getDest();
 			}
 			else
@@ -180,7 +202,7 @@ public class robot_algo {
 		List<node_data> bestNode=gr.shortestPath(src, dest);
 		return bestNode.get(1).getKey();
 	}
-	
+
 	/**
 	 * compute the best way to go to the fruit the user wants
 	 * @param src
@@ -193,12 +215,12 @@ public class robot_algo {
 		gg.init(this.game_.getGraph().toString());
 		Graph_Algo gr=new Graph_Algo();
 		gr.init(gg);
-		
+
 		list_to_go_through = gr.shortestPath(src, dest);
-		
+
 		return list_to_go_through;
 	}
-	
+
 	/**
 	 * return this game
 	 * @return
@@ -227,6 +249,6 @@ public class robot_algo {
 	public ArrayList<Fruit_c> update_inner_fruit(){
 		return this.get_fruits(this.game_);
 	}
-		
+
 
 }
